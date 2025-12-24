@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surveyor - Statistics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --kt-primary: #3E97FF;
+            --kt-primary-light: #F1FAFF;
+            --kt-success: #50CD89;
+            --kt-success-light: #E8FFF3;
+            --kt-warning: #FFC700;
+            --kt-warning-light: #FFF8DD;
+            --kt-danger: #F1416C;
+            --kt-danger-light: #FFF5F8;
+            --kt-info: #7239EA;
+            --kt-gray-100: #F9F9F9;
+            --kt-gray-200: #F1F1F2;
+            --kt-gray-300: #E1E3EA;
+            --kt-gray-400: #B5B5C3;
+            --kt-gray-500: #A1A5B7;
+            --kt-gray-600: #7E8299;
+            --kt-gray-700: #5E6278;
+            --kt-gray-800: #3F4254;
+            --kt-gray-900: #181C32;
+            --sidebar-width: 220px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #fff;
+            min-height: 100vh;
+        }
+
+        /* ========== LEFT SIDEBAR ========== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: #fff;
+            border-right: 1px solid var(--kt-gray-200);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            transition: width 0.25s ease;
+        }
+
+        .sidebar.collapsed { width: 70px; }
+        .sidebar.collapsed .nav-item { justify-content: center; padding: 11px; }
+        .sidebar.collapsed .nav-text, .sidebar.collapsed .chevron { display: none; }
+        .sidebar.collapsed .nav-item { position: relative; }
+        .sidebar.collapsed .nav-item::after {
+            content: attr(data-title);
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--kt-gray-900);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.15s ease;
+            margin-left: 10px;
+            z-index: 1000;
+        }
+        .sidebar.collapsed .nav-item:hover::after { opacity: 1; visibility: visible; }
+        .sidebar.collapsed .nav-item svg { margin: 0; }
+        .sidebar.collapsed .switch-classic { justify-content: center; padding: 10px; }
+        .sidebar.collapsed .switch-classic span { display: none; }
+        .switch-classic span { white-space: nowrap; overflow: hidden; }
+
+        body.sidebar-collapsed .top-header { left: 70px; }
+        body.sidebar-collapsed .secondary-nav { left: 70px; }
+        body.sidebar-collapsed .toolbar-ribbon { left: 70px; }
+        body.sidebar-collapsed .main-content { margin-left: 70px; }
+
+        .sidebar-logo {
+            padding: 15px 16px;
+            border-bottom: 1px solid var(--kt-gray-200);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            height: 60px;
+        }
+        .sidebar-logo img { width: 32px; height: 32px; border-radius: 6px; }
+        .sidebar.collapsed .sidebar-logo { justify-content: center; padding: 15px 10px; }
+        .sidebar.collapsed .sidebar-logo img { width: 40px; height: 40px; }
+        .sidebar.collapsed .sidebar-logo span { display: none; }
+        .sidebar-logo span { font-size: 1.1rem; font-weight: 600; color: #50cd89; }
+
+        .nav-menu { padding: 12px 10px; flex: 1; }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 14px;
+            border-radius: 6px;
+            color: var(--kt-gray-700);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+            margin-bottom: 2px;
+            user-select: none;
+        }
+        .nav-item:hover { background: var(--kt-gray-100); color: var(--kt-gray-900); }
+        .nav-item:active { transform: scale(0.98); }
+        .nav-item.active { background: var(--kt-primary-light); color: var(--kt-primary); }
+        .nav-item.active:hover { background: var(--kt-primary-light); }
+        .nav-item svg { width: 18px; height: 18px; stroke: currentColor; flex-shrink: 0; }
+        .nav-text { flex: 1; white-space: nowrap; overflow: hidden; }
+        .nav-item .chevron { margin-left: auto; width: 16px; height: 16px; stroke: var(--kt-gray-400); }
+
+        .sidebar-footer { padding: 16px; border-top: 1px solid var(--kt-gray-200); }
+        .switch-classic {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background: var(--kt-gray-100);
+            border-radius: 6px;
+            font-size: 0.8125rem;
+            color: var(--kt-gray-700);
+            cursor: pointer;
+        }
+        .switch-classic svg { width: 18px; height: 18px; stroke: #17a388; }
+
+        /* ========== TOP HEADER ========== */
+        .top-header {
+            position: fixed;
+            top: 0;
+            left: var(--sidebar-width);
+            right: 0;
+            height: 60px;
+            background: #fff;
+            border-bottom: 1px solid var(--kt-gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 99;
+            transition: left 0.25s ease;
+        }
+        .header-left { display: flex; align-items: center; gap: 8px; }
+        .collapse-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--kt-gray-500);
+        }
+        .header-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--kt-gray-700);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+        .header-nav-item:hover { color: var(--kt-primary); }
+        .header-nav-item svg { width: 16px; height: 16px; stroke: currentColor; }
+        .header-right { display: flex; align-items: center; gap: 12px; }
+        .header-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: var(--kt-gray-100);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--kt-gray-600);
+        }
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: var(--kt-gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--kt-gray-700);
+            font-size: 0.875rem;
+        }
+
+        /* ========== SECONDARY NAV RIBBON ========== */
+        .secondary-nav {
+            position: fixed;
+            top: 60px;
+            left: var(--sidebar-width);
+            right: 0;
+            height: 50px;
+            background: #fff;
+            border-bottom: 1px solid var(--kt-gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 0 20px;
+            gap: 16px;
+            z-index: 98;
+            transition: left 0.25s ease;
+        }
+        .secondary-nav-left { display: flex; align-items: center; gap: 8px; }
+        .secondary-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 5px;
+            color: var(--kt-gray-600);
+            text-decoration: none;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+        .secondary-nav-item:hover { background: var(--kt-gray-100); color: var(--kt-gray-800); }
+        .secondary-nav-item.active { background: var(--kt-primary-light); color: var(--kt-primary); }
+        .secondary-nav-item svg { width: 16px; height: 16px; stroke: currentColor; }
+
+        /* ========== TOOLBAR RIBBON ========== */
+        .toolbar-ribbon {
+            position: fixed;
+            top: 110px;
+            left: var(--sidebar-width);
+            right: 0;
+            height: 56px;
+            background: #fff;
+            border-bottom: 1px solid var(--kt-gray-200);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 12px;
+            z-index: 97;
+            transition: left 0.25s ease;
+        }
+
+        /* Date Filter Dropdown */
+        .date-filter-wrapper {
+            position: relative;
+            height: 38px;
+        }
+        .date-filter-btn {
+            height: 100%;
+            padding: 0 32px 0 12px;
+            border: 1px solid var(--kt-gray-300);
+            border-radius: 6px;
+            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237E8299' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") right 10px center no-repeat;
+            font-size: 0.8125rem;
+            color: var(--kt-gray-700);
+            cursor: pointer;
+            min-width: 150px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s;
+        }
+        .date-filter-btn:hover { border-color: var(--kt-gray-400); }
+        .date-filter-btn.active {
+            border-color: var(--kt-primary);
+            box-shadow: 0 0 0 3px var(--kt-primary-light);
+        }
+        .date-filter-dropdown {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            min-width: 200px;
+            background: #fff;
+            border: 1px solid var(--kt-gray-300);
+            border-radius: 6px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: none;
+        }
+        .date-filter-dropdown.show { display: block; }
+        .date-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            cursor: pointer;
+            font-size: 0.8125rem;
+            color: var(--kt-gray-700);
+            transition: background 0.15s;
+        }
+        .date-option:hover { background: var(--kt-gray-100); }
+        .date-option.selected { background: var(--kt-primary-light); color: var(--kt-primary); }
+        .date-option svg { width: 16px; height: 16px; stroke: currentColor; }
+
+        .toolbar-spacer { flex: 1; }
+
+        /* Tooltip - BOTTOM position */
+        [data-tooltip] {
+            position: relative;
+        }
+        [data-tooltip]::before {
+            content: attr(data-tooltip);
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--kt-gray-900);
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 0.6875rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.15s ease;
+            z-index: 1001;
+            pointer-events: none;
+        }
+        [data-tooltip]::after {
+            content: '';
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 50%;
+            transform: translateX(-50%);
+            border: 4px solid transparent;
+            border-bottom-color: var(--kt-gray-900);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.15s ease;
+            pointer-events: none;
+        }
+        [data-tooltip]:hover::before,
+        [data-tooltip]:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: 166px;
+            min-height: calc(100vh - 166px);
+            transition: margin-left 0.25s ease;
+            background: var(--kt-gray-100);
+            padding: 20px;
+        }
+
+        /* ========== STATISTICS GRID ========== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 1400px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ========== CHART CARD ========== */
+        .chart-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            padding: 24px;
+        }
+
+        .chart-title {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: var(--kt-gray-800);
+            margin-bottom: 24px;
+        }
+
+        .chart-container {
+            height: 200px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 16px;
+            padding-bottom: 40px;
+            position: relative;
+        }
+
+        .bar-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            position: relative;
+        }
+
+        .bar-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .bar {
+            width: 40px;
+            border-radius: 4px 4px 0 0;
+            transition: all 0.3s ease;
+            position: relative;
+            min-height: 4px;
+        }
+
+        .bar.primary {
+            background: var(--kt-primary);
+        }
+
+        .bar.gray {
+            background: var(--kt-gray-400);
+        }
+
+        .bar:hover {
+            opacity: 0.85;
+            transform: scaleY(1.02);
+            transform-origin: bottom;
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.6875rem;
+            color: var(--kt-gray-500);
+            white-space: nowrap;
+        }
+
+        .bar-value {
+            position: absolute;
+            bottom: -42px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--kt-gray-700);
+        }
+
+        /* Loading skeleton for charts */
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, var(--kt-gray-200) 25%, var(--kt-gray-100) 50%, var(--kt-gray-200) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 4px;
+        }
+
+        .chart-skeleton {
+            display: none;
+        }
+
+        .chart-skeleton.show {
+            display: flex;
+        }
+
+        .chart-skeleton .bar {
+            background: linear-gradient(90deg, var(--kt-gray-200) 25%, var(--kt-gray-100) 50%, var(--kt-gray-200) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        /* Chat button */
+        .chat-fab {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            background: #7ed321;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(126, 211, 33, 0.4);
+            cursor: pointer;
+            z-index: 100;
+        }
+        .chat-fab svg { width: 24px; height: 24px; stroke: #fff; }
+    </style>
+</head>
+<body class="sidebar-collapsed">
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar collapsed">
+        <div class="sidebar-logo">
+            <img src="logo.png" alt="Surveyor Logo">
+            <span>surveyor</span>
+        </div>
+        <nav class="nav-menu">
+            <a href="properties-full.html" class="nav-item active" data-title="Home">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                <span class="nav-text">Home</span>
+            </a>
+            <a href="#" class="nav-item" data-title="Shared Reports">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                </svg>
+                <span class="nav-text">Shared Reports</span>
+                <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </a>
+            <a href="#" class="nav-item" data-title="Inspection Settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                <span class="nav-text">Inspection Settings</span>
+                <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </a>
+            <a href="#" class="nav-item" data-title="Report Settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                </svg>
+                <span class="nav-text">Report Settings</span>
+            </a>
+            <a href="#" class="nav-item" data-title="Bookings">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span class="nav-text">Bookings</span>
+            </a>
+            <a href="#" class="nav-item" data-title="Global Settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                <span class="nav-text">Global Settings</span>
+                <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="switch-classic">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+                <span>Switch to Imfuna Classic?</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- TOP HEADER -->
+    <header class="top-header">
+        <div class="header-left">
+            <button class="collapse-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            <a href="properties-full.html" class="header-nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Home
+            </a>
+        </div>
+        <div class="header-right">
+            <button class="header-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+            </button>
+            <div class="avatar">K</div>
+        </div>
+    </header>
+
+    <!-- SECONDARY NAV RIBBON -->
+    <nav class="secondary-nav">
+        <div class="secondary-nav-left">
+            <a href="properties-full.html" class="secondary-nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Properties
+            </a>
+            <a href="summary.html" class="secondary-nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                Summary
+            </a>
+            <a href="statistics.html" class="secondary-nav-item active">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+                    <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+                </svg>
+                Statistics
+            </a>
+            <a href="risk-rating.html" class="secondary-nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+                Risk Rating
+            </a>
+        </div>
+    </nav>
+
+    <!-- TOOLBAR RIBBON -->
+    <div class="toolbar-ribbon">
+        <!-- Date Filter -->
+        <div class="date-filter-wrapper" data-tooltip="Filter by date range">
+            <button class="date-filter-btn" id="dateFilterBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;stroke:currentColor">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span id="dateFilterText">This Month</span>
+            </button>
+            <div class="date-filter-dropdown" id="dateFilterDropdown">
+                <div class="date-option" data-value="week">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    This Week
+                </div>
+                <div class="date-option selected" data-value="month">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    This Month
+                </div>
+                <div class="date-option" data-value="3months">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    Last 3 Months
+                </div>
+                <div class="date-option" data-value="6months">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    Last 6 Months
+                </div>
+                <div class="date-option" data-value="1year">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    Last 1 Year
+                </div>
+            </div>
+        </div>
+
+        <div class="toolbar-spacer"></div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <div class="stats-grid" id="statsGrid">
+            <!-- Inspections Chart -->
+            <div class="chart-card">
+                <div class="chart-title">Inspections</div>
+                <div class="chart-container" id="inspectionsChart">
+                    <div class="bar-group">
+                        <div class="bar-wrapper">
+                            <div class="bar gray" style="height: 2.5%;" data-value="2"></div>
+                        </div>
+                        <span class="bar-label">3m ago</span>
+                        <span class="bar-value">2</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar-wrapper">
+                            <div class="bar gray" style="height: 3.8%;" data-value="3"></div>
+                        </div>
+                        <span class="bar-label">2m ago</span>
+                        <span class="bar-value">3</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar-wrapper">
+                            <div class="bar primary" style="height: 45.6%;" data-value="36"></div>
+                        </div>
+                        <span class="bar-label">1m ago</span>
+                        <span class="bar-value">36</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar-wrapper">
+                            <div class="bar primary" style="height: 100%;" data-value="79"></div>
+                        </div>
+                        <span class="bar-label">This month</span>
+                        <span class="bar-value">79</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Photos Chart -->
+            <div class="chart-card">
+                <div class="chart-title">Photos</div>
+                <div class="chart-container" id="photosChart">
+                    <div class="bar-group">
+                        <div class="bar-wrapper">
+                            <div class="bar gray" style="height: 0%;" data-value="0"></div>
+                        </div>
+                        <span class="bar-label">3m ago</span>
+                        <span class="bar-value">0</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar-wrapper">
+                            <div class="bar gray" style="height: 2.5%;" data-value="2"></div>
+                        </div>
+                        <span class="bar-label">2m ago</span>
+                        <span class="bar-value">2</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar-wrapper">
+                            <div class="bar primary" style="height: 17.7%;" data-value="14"></div>
+                        </div>
+                        <span class="bar-label">1m ago</span>
+                        <span class="bar-value">14</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar-wrapper">
+                            <div class="bar primary" style="height: 100%;" data-value="79"></div>
+                        </div>
+                        <span class="bar-label">This month</span>
+                        <span class="bar-value">79</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dictation Minutes Chart -->
+            <div class="chart-card">
+                <div class="chart-title">Dictation Minutes</div>
+                <div class="chart-container" id="dictationChart">
+                    <div class="bar-group">
+                        <div class="bar-wrapper">
+                            <div class="bar gray" style="height: 0%;" data-value="0"></div>
+                        </div>
+                        <span class="bar-label">3m ago</span>
+                        <span class="bar-value">0</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar-wrapper">
+                            <div class="bar gray" style="height: 19.1%;" data-value="3.1"></div>
+                        </div>
+                        <span class="bar-label">2m ago</span>
+                        <span class="bar-value">3.1</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar-wrapper">
+                            <div class="bar primary" style="height: 100%;" data-value="16.2"></div>
+                        </div>
+                        <span class="bar-label">1m ago</span>
+                        <span class="bar-value">16.2</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar-wrapper">
+                            <div class="bar gray" style="height: 0%;" data-value="0.0"></div>
+                        </div>
+                        <span class="bar-label">This month</span>
+                        <span class="bar-value">0.0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transcription Minutes Chart -->
+            <div class="chart-card">
+                <div class="chart-title">Transcription Minutes</div>
+                <div class="chart-container" id="transcriptionChart">
+                    <div class="bar-group">
+                        <div class="bar-wrapper">
+                            <div class="bar gray" style="height: 0%;" data-value="0"></div>
+                        </div>
+                        <span class="bar-label">3m ago</span>
+                        <span class="bar-value">0</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar-wrapper">
+                            <div class="bar gray" style="height: 20.8%;" data-value="3.1"></div>
+                        </div>
+                        <span class="bar-label">2m ago</span>
+                        <span class="bar-value">3.1</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar-wrapper">
+                            <div class="bar primary" style="height: 100%;" data-value="14.9"></div>
+                        </div>
+                        <span class="bar-label">1m ago</span>
+                        <span class="bar-value">14.9</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar-wrapper">
+                            <div class="bar gray" style="height: 0%;" data-value="0.0"></div>
+                        </div>
+                        <span class="bar-label">This month</span>
+                        <span class="bar-value">0.0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Chat Button -->
+    <div class="chat-fab">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+        </svg>
+    </div>
+
+    <script>
+        // Sidebar toggle
+        const sidebar = document.querySelector('.sidebar');
+        const collapseBtn = document.querySelector('.collapse-btn');
+
+        collapseBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            document.body.classList.toggle('sidebar-collapsed');
+        });
+
+        // Date filter dropdown
+        const dateFilterBtn = document.getElementById('dateFilterBtn');
+        const dateFilterDropdown = document.getElementById('dateFilterDropdown');
+        const dateFilterText = document.getElementById('dateFilterText');
+        const dateOptions = document.querySelectorAll('.date-option');
+
+        dateFilterBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dateFilterBtn.classList.toggle('active');
+            dateFilterDropdown.classList.toggle('show');
+        });
+
+        dateOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                // Remove selected from all options
+                dateOptions.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+
+                // Update button text
+                dateFilterText.textContent = option.textContent.trim();
+
+                // Close dropdown
+                dateFilterDropdown.classList.remove('show');
+                dateFilterBtn.classList.remove('active');
+
+                // Trigger data refresh (simulated)
+                refreshCharts(option.dataset.value);
+            });
+        });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', () => {
+            dateFilterDropdown.classList.remove('show');
+            dateFilterBtn.classList.remove('active');
+        });
+
+        // Sample data for different date ranges
+        const chartData = {
+            week: {
+                inspections: { labels: ['4d ago', '3d ago', '2d ago', 'Today'], values: [5, 8, 12, 15], max: 15 },
+                photos: { labels: ['4d ago', '3d ago', '2d ago', 'Today'], values: [10, 25, 30, 45], max: 45 },
+                dictation: { labels: ['4d ago', '3d ago', '2d ago', 'Today'], values: [1.2, 2.5, 3.1, 4.0], max: 4.0 },
+                transcription: { labels: ['4d ago', '3d ago', '2d ago', 'Today'], values: [1.0, 2.2, 2.8, 3.5], max: 3.5 }
+            },
+            month: {
+                inspections: { labels: ['3m ago', '2m ago', '1m ago', 'This month'], values: [2, 3, 36, 79], max: 79 },
+                photos: { labels: ['3m ago', '2m ago', '1m ago', 'This month'], values: [0, 2, 14, 79], max: 79 },
+                dictation: { labels: ['3m ago', '2m ago', '1m ago', 'This month'], values: [0, 3.1, 16.2, 0.0], max: 16.2 },
+                transcription: { labels: ['3m ago', '2m ago', '1m ago', 'This month'], values: [0, 3.1, 14.9, 0.0], max: 14.9 }
+            },
+            '3months': {
+                inspections: { labels: ['6m ago', '5m ago', '4m ago', '3m ago'], values: [15, 22, 18, 41], max: 41 },
+                photos: { labels: ['6m ago', '5m ago', '4m ago', '3m ago'], values: [45, 68, 52, 95], max: 95 },
+                dictation: { labels: ['6m ago', '5m ago', '4m ago', '3m ago'], values: [8.2, 12.5, 9.8, 19.3], max: 19.3 },
+                transcription: { labels: ['6m ago', '5m ago', '4m ago', '3m ago'], values: [7.5, 11.2, 8.9, 17.8], max: 17.8 }
+            },
+            '6months': {
+                inspections: { labels: ['9m ago', '6m ago', '3m ago', 'Now'], values: [28, 45, 62, 120], max: 120 },
+                photos: { labels: ['9m ago', '6m ago', '3m ago', 'Now'], values: [120, 185, 240, 310], max: 310 },
+                dictation: { labels: ['9m ago', '6m ago', '3m ago', 'Now'], values: [15.5, 28.3, 35.2, 19.3], max: 35.2 },
+                transcription: { labels: ['9m ago', '6m ago', '3m ago', 'Now'], values: [14.2, 25.8, 32.1, 17.8], max: 32.1 }
+            },
+            '1year': {
+                inspections: { labels: ['Q1', 'Q2', 'Q3', 'Q4'], values: [85, 120, 145, 180], max: 180 },
+                photos: { labels: ['Q1', 'Q2', 'Q3', 'Q4'], values: [450, 620, 780, 920], max: 920 },
+                dictation: { labels: ['Q1', 'Q2', 'Q3', 'Q4'], values: [45.2, 58.3, 72.1, 35.2], max: 72.1 },
+                transcription: { labels: ['Q1', 'Q2', 'Q3', 'Q4'], values: [42.1, 54.2, 68.5, 32.1], max: 68.5 }
+            }
+        };
+
+        function refreshCharts(period) {
+            const data = chartData[period] || chartData.month;
+
+            updateChart('inspectionsChart', data.inspections);
+            updateChart('photosChart', data.photos);
+            updateChart('dictationChart', data.dictation);
+            updateChart('transcriptionChart', data.transcription);
+        }
+
+        function updateChart(chartId, data) {
+            const chart = document.getElementById(chartId);
+            const barGroups = chart.querySelectorAll('.bar-group');
+
+            barGroups.forEach((group, index) => {
+                const bar = group.querySelector('.bar');
+                const label = group.querySelector('.bar-label');
+                const value = group.querySelector('.bar-value');
+
+                const val = data.values[index];
+                const percentage = data.max > 0 ? (val / data.max) * 100 : 0;
+
+                // Update bar height with animation
+                bar.style.height = Math.max(percentage, val > 0 ? 2 : 0) + '%';
+
+                // Update bar color - primary for highest values, gray for others
+                const maxVal = Math.max(...data.values);
+                if (val === maxVal && val > 0) {
+                    bar.classList.remove('gray');
+                    bar.classList.add('primary');
+                } else {
+                    bar.classList.remove('primary');
+                    bar.classList.add('gray');
+                }
+
+                // Update labels and values
+                label.textContent = data.labels[index];
+                value.textContent = Number.isInteger(val) ? val : val.toFixed(1);
+            });
+        }
+    </script>
+</body>
+</html>

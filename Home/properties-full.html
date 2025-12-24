@@ -1,0 +1,1628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surveyor - Properties</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --kt-primary: #163300;
+            --kt-primary-light: #EEE6DA;
+            --kt-accent: #9FE870;
+            --kt-success: #50CD89;
+            --kt-success-light: #E8FFF3;
+            --kt-warning: #FFC700;
+            --kt-info: #7239EA;
+            --kt-gray-100: #F9F9F9;
+            --kt-gray-200: #F1F1F2;
+            --kt-gray-300: #E1E3EA;
+            --kt-gray-400: #B5B5C3;
+            --kt-gray-500: #A1A5B7;
+            --kt-gray-600: #7E8299;
+            --kt-gray-700: #5E6278;
+            --kt-gray-800: #3F4254;
+            --kt-gray-900: #181C32;
+            --sidebar-width: 220px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #fff;
+            min-height: 100vh;
+        }
+
+        /* ========== LEFT SIDEBAR ========== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: #fff;
+            border-right: 1px solid var(--kt-gray-200);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            transition: width 0.25s ease;
+        }
+
+        /* Collapsed state */
+        .sidebar.collapsed {
+            width: 70px;
+        }
+
+
+        .sidebar.collapsed .nav-item {
+            justify-content: center;
+            padding: 11px;
+        }
+
+        .sidebar.collapsed .nav-text,
+        .sidebar.collapsed .chevron {
+            display: none;
+        }
+
+        /* Tooltip on collapsed state */
+        .sidebar.collapsed .nav-item {
+            position: relative;
+        }
+
+        .sidebar.collapsed .nav-item::after {
+            content: attr(data-title);
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--kt-gray-900);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.15s ease;
+            margin-left: 10px;
+            z-index: 1000;
+        }
+
+        .sidebar.collapsed .nav-item:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .sidebar.collapsed .nav-item svg {
+            margin: 0;
+        }
+
+        .sidebar.collapsed .switch-classic {
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .sidebar.collapsed .switch-classic span {
+            display: none;
+        }
+
+        .switch-classic span {
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        /* Adjust layout when sidebar is collapsed */
+        body.sidebar-collapsed .top-header {
+            left: 70px;
+        }
+
+        body.sidebar-collapsed .secondary-nav {
+            left: 70px;
+        }
+
+        body.sidebar-collapsed .main-content {
+            margin-left: 70px;
+        }
+
+        body.sidebar-collapsed .bottom-pagination {
+            left: calc(70px + 220px);
+        }
+
+        .sidebar-logo {
+            padding: 15px 16px;
+            border-bottom: 1px solid var(--kt-gray-200);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            height: 60px;
+        }
+
+        .sidebar-logo img {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+        }
+
+        .sidebar.collapsed .sidebar-logo {
+            justify-content: center;
+            padding: 15px 10px;
+        }
+
+        .sidebar.collapsed .sidebar-logo img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .sidebar.collapsed .sidebar-logo span {
+            display: none;
+        }
+
+        .sidebar-logo span {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #50cd89;
+        }
+
+        .nav-menu { padding: 12px 10px; flex: 1; }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 14px;
+            border-radius: 6px;
+            color: var(--kt-gray-700);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+            margin-bottom: 2px;
+            user-select: none;
+        }
+
+        .nav-item:hover { 
+            background: var(--kt-gray-100); 
+            color: var(--kt-gray-900);
+        }
+        
+        .nav-item:active {
+            transform: scale(0.98);
+        }
+        
+        .nav-item.active { 
+            background: var(--kt-primary-light); 
+            color: var(--kt-primary); 
+        }
+        
+        .nav-item.active:hover {
+            background: var(--kt-primary-light);
+        }
+        .nav-item svg { width: 18px; height: 18px; stroke: currentColor; flex-shrink: 0; }
+
+        .nav-text {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .nav-item .chevron {
+            margin-left: auto;
+            width: 16px;
+            height: 16px;
+            stroke: var(--kt-gray-400);
+        }
+
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid var(--kt-gray-200);
+        }
+
+        .switch-classic {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background: var(--kt-gray-100);
+            border-radius: 6px;
+            font-size: 0.8125rem;
+            color: var(--kt-gray-700);
+            cursor: pointer;
+        }
+
+        .switch-classic svg { width: 18px; height: 18px; stroke: #17a388; }
+
+        /* ========== TOP HEADER ========== */
+        .top-header {
+            position: fixed;
+            top: 0;
+            left: var(--sidebar-width);
+            right: 0;
+            height: 60px;
+            background: #fff;
+            border-bottom: 1px solid var(--kt-gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 99;
+            transition: left 0.25s ease;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .collapse-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--kt-gray-500);
+        }
+
+        .header-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--kt-gray-700);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+
+        .header-nav-item:hover {
+            color: var(--kt-primary);
+        }
+
+        .header-nav-item svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: var(--kt-gray-100);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--kt-gray-600);
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: var(--kt-gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--kt-gray-700);
+            font-size: 0.875rem;
+        }
+
+        /* ========== SECONDARY NAV RIBBON ========== */
+        .secondary-nav {
+            position: fixed;
+            top: 60px;
+            left: var(--sidebar-width);
+            right: 0;
+            height: 50px;
+            background: #fff;
+            border-bottom: 1px solid var(--kt-gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            gap: 16px;
+            z-index: 98;
+            transition: left 0.25s ease;
+        }
+
+        .secondary-nav-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .secondary-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 5px;
+            color: var(--kt-gray-600);
+            text-decoration: none;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+
+        .secondary-nav-item:hover {
+            background: var(--kt-gray-100);
+            color: var(--kt-gray-800);
+        }
+
+        .secondary-nav-item.active {
+            background: var(--kt-primary-light);
+            color: var(--kt-primary);
+        }
+
+        .secondary-nav-item svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+        }
+
+        .secondary-nav-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* Metronic-style Combined Search Box */
+        .search-box-combined {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border: 1px solid var(--kt-gray-300);
+            border-radius: 6px;
+            overflow: hidden;
+            transition: all 0.15s ease;
+            padding: 0 2px;
+            height: 38px;
+        }
+
+        .search-box-combined:focus-within {
+            border-color: var(--kt-primary);
+            box-shadow: 0 0 0 3px var(--kt-primary-light);
+        }
+
+        .search-input-wrapper {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input-wrapper svg {
+            position: absolute;
+            left: 12px;
+            width: 14px;
+            height: 14px;
+            stroke: var(--kt-gray-400);
+            pointer-events: none;
+        }
+
+        .search-input-wrapper input {
+            width: 100%;
+            min-width: 340px;
+            padding: 6px 12px 6px 34px;
+            border: none;
+            font-size: 0.8125rem;
+            font-family: inherit;
+            color: var(--kt-gray-800);
+            background: transparent;
+            outline: none;
+        }
+
+        .search-input-wrapper input::placeholder {
+            color: var(--kt-gray-400);
+        }
+
+        .btn-group-infix {
+            display: flex;
+            background: var(--kt-gray-100);
+            padding: 2px;
+            margin: 0;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        .search-divider {
+            width: 1px;
+            height: 20px;
+            background: var(--kt-gray-200);
+            margin: 0 10px;
+            flex-shrink: 0;
+        }
+
+        .btn-filter {
+            padding: 4px 10px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            border: none;
+            background: transparent;
+            color: var(--kt-gray-600);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border-radius: 3px;
+            white-space: nowrap;
+        }
+
+        .btn-filter:hover {
+            color: var(--kt-gray-800);
+        }
+
+        .btn-filter.active {
+            background: #fff;
+            color: var(--kt-primary);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .btn-search {
+            padding: 5px 12px;
+            margin: 3px;
+            margin-left: 0;
+            border-radius: 4px;
+            flex-shrink: 0;
+            gap: 5px;
+            font-size: 0.75rem;
+        }
+
+        .btn-search svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        .btn-add-property {
+            position: relative;
+        }
+
+        .btn-add-property::after {
+            content: 'Add Property';
+            position: absolute;
+            bottom: -32px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--kt-gray-900);
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.15s ease;
+            z-index: 100;
+        }
+
+        .btn-add-property:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* ========== FIXED BOTTOM PAGINATION ========== */
+        .bottom-pagination {
+            position: fixed;
+            bottom: 0;
+            left: calc(var(--sidebar-width) + 220px);
+            right: 0;
+            height: 50px;
+            background: #fff;
+            border-top: 1px solid var(--kt-gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            font-size: 0.8125rem;
+            z-index: 97;
+            transition: left 0.25s ease;
+        }
+
+        .bottom-pagination a, .bottom-pagination span {
+            padding: 8px 12px;
+            color: var(--kt-gray-600);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.15s;
+        }
+
+        .bottom-pagination a:hover { 
+            background: var(--kt-gray-100);
+            color: var(--kt-gray-800);
+        }
+        
+        .bottom-pagination a.active { 
+            background: var(--kt-primary);
+            color: #fff;
+        }
+
+        .bottom-pagination .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+            padding: 8px 14px;
+        }
+
+        .bottom-pagination .nav-btn svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+        }
+
+        .bottom-pagination .ellipsis {
+            color: var(--kt-gray-400);
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: 110px;
+            display: flex;
+            min-height: calc(100vh - 110px);
+            transition: margin-left 0.25s ease;
+        }
+
+        /* ========== NEW TOOLBAR (IMPROVED) ========== */
+        .toolbar-section {
+            padding: 16px 20px;
+            background: #fff;
+            border-bottom: 1px solid var(--kt-gray-200);
+        }
+
+        .toolbar-card {
+            background: var(--kt-gray-100);
+            border-radius: 0.625rem;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .toolbar-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toolbar-title h2 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--kt-gray-900);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 14px;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            border-radius: 0.475rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn svg { width: 14px; height: 14px; }
+        .btn-sm { padding: 6px 12px; font-size: 0.8125rem; }
+        .btn-primary { background: var(--kt-primary); color: #fff; }
+        .btn-primary:hover { background: #0f2200; }
+        .btn-icon { width: 32px; height: 32px; padding: 0; }
+
+        /* ========== SEARCH INPUT ========== */
+
+        /* ========== STATUS FILTERS ========== */
+        .filters-panel {
+            width: 220px;
+            background: #fff;
+            border-right: 1px solid var(--kt-gray-200);
+            padding: 0;
+            flex-shrink: 0;
+            position: fixed;
+            top: 110px;
+            left: var(--sidebar-width);
+            height: calc(100vh - 110px);
+            overflow-y: auto;
+            z-index: 97;
+            transition: left 0.25s ease;
+        }
+
+        body.sidebar-collapsed .filters-panel {
+            left: 70px;
+        }
+
+        .filters-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--kt-gray-200);
+        }
+
+        .filters-header .btn-add-property {
+            width: 100%;
+            justify-content: center;
+            padding: 10px 16px;
+        }
+
+        .filters-header .btn-add-property::after {
+            display: none;
+        }
+
+        .filter-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: background 0.15s;
+            font-size: 0.8125rem;
+            color: var(--kt-gray-700);
+        }
+
+        .filter-item:hover { background: var(--kt-gray-100); }
+        .filter-item.active { background: var(--kt-primary-light); color: var(--kt-primary); }
+        .filter-item svg { width: 18px; height: 18px; stroke: currentColor; flex-shrink: 0; }
+
+        .filter-item .count {
+            margin-left: auto;
+            font-size: 0.75rem;
+            color: var(--kt-gray-500);
+        }
+
+        .filter-item.active .count { color: var(--kt-primary); }
+
+        /* ========== PROPERTY LIST ========== */
+        .content-area {
+            flex: 1;
+            background: var(--kt-gray-100);
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 50px;
+            margin-left: 220px;
+        }
+
+        .property-list {
+            flex: 1;
+            padding: 16px 20px;
+            overflow-y: auto;
+        }
+
+        .property-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+
+        .property-header {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .property-image {
+            width: 80px;
+            height: 60px;
+            background: var(--kt-gray-200);
+            border-radius: 6px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .property-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .property-info { flex: 1; }
+
+        .property-address {
+            font-size: 0.875rem;
+            color: var(--kt-primary);
+            font-weight: 500;
+            margin-bottom: 4px;
+            cursor: pointer;
+        }
+
+        .property-address:hover { text-decoration: underline; }
+
+        .property-client {
+            font-size: 0.75rem;
+            color: var(--kt-gray-500);
+        }
+
+        .inspection-row {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-top: 1px solid var(--kt-gray-200);
+            gap: 16px;
+        }
+
+        .inspection-name {
+            flex: 1;
+            font-size: 0.8125rem;
+            color: var(--kt-primary);
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .inspection-name:hover { text-decoration: underline; }
+
+        .inspection-meta {
+            font-size: 0.75rem;
+            color: var(--kt-gray-500);
+            text-align: right;
+            min-width: 150px;
+        }
+
+        .inspection-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: var(--kt-success);
+            min-width: 140px;
+        }
+
+        .inspection-status svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--kt-success);
+        }
+
+        /* Chat button */
+        .chat-fab {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            background: #7ed321;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(126, 211, 33, 0.4);
+            cursor: pointer;
+        }
+
+        .chat-fab svg { width: 24px; height: 24px; stroke: #fff; }
+
+        /* ========== SKELETON LOADING ========== */
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, var(--kt-gray-200) 25%, var(--kt-gray-100) 50%, var(--kt-gray-200) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 4px;
+        }
+
+        .skeleton-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+
+        .skeleton-header {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .skeleton-image {
+            width: 80px;
+            height: 60px;
+            border-radius: 6px;
+        }
+
+        .skeleton-info {
+            flex: 1;
+        }
+
+        .skeleton-title {
+            height: 16px;
+            width: 70%;
+            margin-bottom: 8px;
+        }
+
+        .skeleton-subtitle {
+            height: 12px;
+            width: 40%;
+        }
+
+        .skeleton-row {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-top: 1px solid var(--kt-gray-200);
+            gap: 16px;
+        }
+
+        .skeleton-text {
+            height: 14px;
+            flex: 1;
+        }
+
+        .skeleton-text-sm {
+            height: 12px;
+            width: 120px;
+        }
+
+        .skeleton-status {
+            height: 14px;
+            width: 180px;
+        }
+
+        /* ========== EMPTY STATE ========== */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 40px;
+            text-align: center;
+            min-height: 400px;
+        }
+
+        .empty-state-icon {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 24px;
+            background: var(--kt-gray-200);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .empty-state-icon svg {
+            width: 56px;
+            height: 56px;
+            stroke: var(--kt-gray-400);
+        }
+
+        .empty-state-icon img {
+            width: 64px;
+            height: 64px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--kt-gray-800);
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            font-size: 0.875rem;
+            color: var(--kt-gray-500);
+            line-height: 1.6;
+            max-width: 360px;
+        }
+
+        .empty-state .btn {
+            margin-top: 20px;
+        }
+
+        /* Hide content when loading */
+        .property-list.loading .property-card {
+            display: none;
+        }
+
+        .property-list .skeleton-card {
+            display: none;
+        }
+
+        .property-list.loading .skeleton-card {
+            display: block;
+        }
+
+        .property-list .empty-state {
+            display: none;
+        }
+
+        .property-list.empty .empty-state {
+            display: flex;
+        }
+
+        .property-list.empty .property-card,
+        .property-list.empty .skeleton-card {
+            display: none;
+        }
+    </style>
+</head>
+<body class="sidebar-collapsed">
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar collapsed">
+        <div class="sidebar-logo">
+            <img src="logo.png" alt="Surveyor Logo">
+            <span>surveyor</span>
+        </div>
+        <nav class="nav-menu">
+            <a href="#" class="nav-item active" data-title="Home">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                <span class="nav-text">Home</span>
+            </a>
+            <a href="#" class="nav-item" data-title="Shared Reports">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                </svg>
+                <span class="nav-text">Shared Reports</span>
+                <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </a>
+            <a href="#" class="nav-item" data-title="Inspection Settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                <span class="nav-text">Inspection Settings</span>
+                <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </a>
+            <a href="#" class="nav-item" data-title="Report Settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                </svg>
+                <span class="nav-text">Report Settings</span>
+            </a>
+            <a href="#" class="nav-item" data-title="Bookings">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span class="nav-text">Bookings</span>
+            </a>
+            <a href="#" class="nav-item" data-title="Global Settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                <span class="nav-text">Global Settings</span>
+                <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="switch-classic">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+                <span>Switch to Imfuna Classic?</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- TOP HEADER -->
+    <header class="top-header">
+        <div class="header-left">
+            <button class="collapse-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            <a href="#" class="header-nav-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Home
+            </a>
+        </div>
+        <div class="header-right">
+            <button class="header-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+            </button>
+            <div class="avatar">K</div>
+        </div>
+    </header>
+
+    <!-- SECONDARY NAV RIBBON -->
+    <nav class="secondary-nav">
+        <div class="secondary-nav-left">
+            <a href="properties-full.html" class="secondary-nav-item active">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Properties
+            </a>
+            <a href="summary.html" class="secondary-nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                Summary
+            </a>
+            <a href="statistics.html" class="secondary-nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+                    <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+                </svg>
+                Statistics
+            </a>
+            <a href="risk-rating.html" class="secondary-nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+                Risk Rating
+            </a>
+        </div>
+        <div class="secondary-nav-right">
+            <div class="search-box-combined">
+                <div class="search-input-wrapper">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Search by address, project, reference or inspection name...">
+                </div>
+                <div class="btn-group-infix" role="group">
+                    <button type="button" class="btn btn-filter active" data-filter="all">All</button>
+                    <button type="button" class="btn btn-filter" data-filter="property">Property</button>
+                    <button type="button" class="btn btn-filter" data-filter="inspection">Inspection</button>
+                </div>
+                <div class="search-divider"></div>
+                <button class="btn btn-primary btn-search" id="searchBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    Search
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <!-- STATUS FILTERS PANEL -->
+        <aside class="filters-panel">
+            <!-- ADD PROPERTY BUTTON -->
+            <div class="filters-header">
+                <button class="btn btn-primary btn-add-property" title="Add Property">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Add Property
+                </button>
+            </div>
+
+            <div class="filter-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                Pending Mobile Completion
+                <span class="count">1291</span>
+            </div>
+            <div class="filter-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                Uploading
+                <span class="count">5</span>
+            </div>
+            <div class="filter-item active">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+                Uploaded
+                <span class="count">761</span>
+            </div>
+            <div class="filter-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                </svg>
+                Transcribing
+                <span class="count">16</span>
+            </div>
+            <div class="filter-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="15" y1="9" x2="9" y2="15"></line>
+                    <line x1="9" y1="9" x2="15" y2="15"></line>
+                </svg>
+                No report generated
+                <span class="count">71</span>
+            </div>
+            <div class="filter-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 20h9"></path>
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                </svg>
+                Awaiting Signature
+                <span class="count">13</span>
+            </div>
+            <div class="filter-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                    <line x1="1" y1="10" x2="23" y2="10"></line>
+                </svg>
+                PAYG / Subscription Issue
+                <span class="count">0</span>
+            </div>
+            <div class="filter-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Property with no Inspection
+                <span class="count">92</span>
+            </div>
+            <div class="filter-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+                Recently Deleted
+                <span class="count">0</span>
+            </div>
+        </aside>
+
+        <!-- PROPERTY LIST -->
+        <div class="content-area">
+            <div class="property-list" id="propertyList">
+                <!-- Skeleton Loading Cards -->
+                <div class="skeleton-card">
+                    <div class="skeleton-header">
+                        <div class="skeleton skeleton-image"></div>
+                        <div class="skeleton-info">
+                            <div class="skeleton skeleton-title"></div>
+                            <div class="skeleton skeleton-subtitle"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-row">
+                        <div class="skeleton skeleton-text" style="width:30%"></div>
+                        <div class="skeleton skeleton-text-sm"></div>
+                        <div class="skeleton skeleton-status"></div>
+                    </div>
+                </div>
+                <div class="skeleton-card">
+                    <div class="skeleton-header">
+                        <div class="skeleton skeleton-image"></div>
+                        <div class="skeleton-info">
+                            <div class="skeleton skeleton-title"></div>
+                            <div class="skeleton skeleton-subtitle"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-row">
+                        <div class="skeleton skeleton-text" style="width:35%"></div>
+                        <div class="skeleton skeleton-text-sm"></div>
+                        <div class="skeleton skeleton-status"></div>
+                    </div>
+                    <div class="skeleton-row">
+                        <div class="skeleton skeleton-text" style="width:25%"></div>
+                        <div class="skeleton skeleton-text-sm"></div>
+                        <div class="skeleton skeleton-status"></div>
+                    </div>
+                </div>
+                <div class="skeleton-card">
+                    <div class="skeleton-header">
+                        <div class="skeleton skeleton-image"></div>
+                        <div class="skeleton-info">
+                            <div class="skeleton skeleton-title"></div>
+                            <div class="skeleton skeleton-subtitle"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-row">
+                        <div class="skeleton skeleton-text" style="width:28%"></div>
+                        <div class="skeleton skeleton-text-sm"></div>
+                        <div class="skeleton skeleton-status"></div>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                        </svg>
+                    </div>
+                    <h3 id="emptyStateTitle">No Properties Found</h3>
+                    <p id="emptyStateDesc">There are no properties matching this status. Try selecting a different filter or add a new property.</p>
+                    <button class="btn btn-primary">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Add Property
+                    </button>
+                </div>
+
+                <!-- Property 1 -->
+                <div class="property-card">
+                    <div class="property-header">
+                        <div class="property-image">
+                            <div style="width:100%;height:100%;background:linear-gradient(135deg,#e0e0e0,#c0c0c0);"></div>
+                        </div>
+                        <div class="property-info">
+                            <div class="property-address">Emperor's Gate, 114a Cromwell Road, London, SW7 4AG (1 inspection)</div>
+                            <div class="property-client">C6 CONSULTANTS</div>
+                        </div>
+                    </div>
+                    <div class="inspection-row">
+                        <div class="inspection-name">New Inspection</div>
+                        <div class="inspection-meta">
+                            <div>11/12/2025 12:09 (GMT)</div>
+                            <div>mark@imfuna.com</div>
+                        </div>
+                        <div class="inspection-status">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                            Uploaded and available for review
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Property 2 -->
+                <div class="property-card">
+                    <div class="property-header">
+                        <div class="property-image">
+                            <div style="width:100%;height:100%;background:linear-gradient(135deg,#d4a574,#8b6914);"></div>
+                        </div>
+                        <div class="property-info">
+                            <div class="property-address">Complete Way, 1 Demo Street, Matlock, DE4 2JW (5 inspections)</div>
+                            <div class="property-client">C6 CONSULTANTS</div>
+                        </div>
+                    </div>
+                    <div class="inspection-row">
+                        <div class="inspection-name">08/12/25 Terminal Dilaps</div>
+                        <div class="inspection-meta">
+                            <div>08/12/2025 14:55 (GMT)</div>
+                            <div>mark@imfuna.com</div>
+                        </div>
+                        <div class="inspection-status">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                            Uploaded and available for review
+                        </div>
+                    </div>
+                    <div class="inspection-row">
+                        <div class="inspection-name">08/12/25 RICS Lvl 2</div>
+                        <div class="inspection-meta">
+                            <div>08/12/2025 09:55 (GMT)</div>
+                            <div>mark@imfuna.com</div>
+                        </div>
+                        <div class="inspection-status">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                            Uploaded and available for review
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Property 3 -->
+                <div class="property-card">
+                    <div class="property-header">
+                        <div class="property-image">
+                            <div style="width:100%;height:100%;background:linear-gradient(135deg,#e8e8e8,#b0b0b0);"></div>
+                        </div>
+                        <div class="property-info">
+                            <div class="property-address">Kanesh, Breezehill Cottage, Wellingborough, NN84SH (3 inspections)</div>
+                            <div class="property-client">Inspections@nationalpropertygroup.com</div>
+                        </div>
+                    </div>
+                    <div class="inspection-row">
+                        <div class="inspection-name">Kanesh3</div>
+                        <div class="inspection-meta">
+                            <div>04/12/2025 09:26 (GMT)</div>
+                            <div>kanesh@imfuna.com</div>
+                        </div>
+                        <div class="inspection-status">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                            Uploaded and available for review
+                        </div>
+                    </div>
+                    <div class="inspection-row">
+                        <div class="inspection-name">Kanesh2</div>
+                        <div class="inspection-meta">
+                            <div>04/12/2025 09:26 (GMT)</div>
+                            <div>kanesh@imfuna.com</div>
+                        </div>
+                        <div class="inspection-status">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                            Uploaded and available for review
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Property 4 -->
+                <div class="property-card">
+                    <div class="property-header">
+                        <div class="property-image">
+                            <div style="width:100%;height:100%;background:linear-gradient(135deg,#4a90d9,#1e5799);"></div>
+                        </div>
+                        <div class="property-info">
+                            <div class="property-address">CWBC Test, 1 SOC Way (1 inspection)</div>
+                            <div class="property-client">C6 CONSULTANTS</div>
+                        </div>
+                    </div>
+                    <div class="inspection-row">
+                        <div class="inspection-name">19/11/25 CWBC Soc</div>
+                        <div class="inspection-meta">
+                            <div>19/11/2025 09:33 (GMT)</div>
+                            <div>mark@imfuna.com</div>
+                        </div>
+                        <div class="inspection-status">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                            Uploaded and available for review
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- FIXED BOTTOM PAGINATION -->
+    <div class="bottom-pagination">
+        <a href="#" class="nav-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+            Prev
+        </a>
+        <a href="#" class="active">1</a>
+        <a href="#">2</a>
+        <a href="#">3</a>
+        <span class="ellipsis">...</span>
+        <a href="#">50</a>
+        <a href="#" class="nav-btn">
+            Next
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+        </a>
+    </div>
+
+    <!-- CHAT FAB -->
+    <div class="chat-fab">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+    </div>
+
+    <script>
+        // Sidebar toggle functionality
+        const collapseBtn = document.querySelector('.collapse-btn');
+        const sidebar = document.querySelector('.sidebar');
+        const body = document.body;
+
+        collapseBtn.addEventListener('click', function() {
+            sidebar.classList.toggle('collapsed');
+            body.classList.toggle('sidebar-collapsed');
+        });
+
+        // Secondary nav items functionality - allow navigation to other pages
+        // No preventDefault so links work normally
+
+        // Filter items functionality with skeleton loading
+        const propertyList = document.getElementById('propertyList');
+        const emptyStateTitle = document.getElementById('emptyStateTitle');
+        const emptyStateDesc = document.getElementById('emptyStateDesc');
+
+        // Empty state messages for each filter
+        const emptyMessages = {
+            'Pending Mobile Completion': {
+                title: 'No Pending Inspections',
+                desc: 'All inspections have been completed on mobile. Great job keeping up with your work!'
+            },
+            'Uploading': {
+                title: 'No Uploads in Progress',
+                desc: 'There are no inspections currently being uploaded. New uploads will appear here automatically.'
+            },
+            'Uploaded': {
+                title: 'No Uploaded Inspections',
+                desc: 'No inspections have been uploaded yet. Complete an inspection on mobile and upload it to see it here.'
+            },
+            'Transcribing': {
+                title: 'No Transcriptions in Progress',
+                desc: 'There are no inspections being transcribed at the moment. Transcription starts automatically after upload.'
+            },
+            'No report generated': {
+                title: 'All Reports Generated',
+                desc: 'All inspections have reports generated. There are no pending report generations.'
+            },
+            'Awaiting Signature': {
+                title: 'No Signatures Pending',
+                desc: 'All reports have been signed. There are no documents awaiting signature.'
+            },
+            'PAYG / Subscription Issue': {
+                title: 'No Payment Issues',
+                desc: 'All accounts are in good standing. There are no payment or subscription issues to resolve.'
+            },
+            'Property with no Inspection': {
+                title: 'All Properties Have Inspections',
+                desc: 'Every property has at least one inspection. Add a new property or start a new inspection.'
+            },
+            'Recently Deleted': {
+                title: 'No Recently Deleted Items',
+                desc: 'There are no recently deleted properties or inspections. Deleted items appear here for 30 days before permanent removal.'
+            }
+        };
+
+        // Simulate data counts for demo (0 = empty state)
+        const filterData = {
+            'Pending Mobile Completion': 4,
+            'Uploading': 0,
+            'Uploaded': 4,
+            'Transcribing': 0,
+            'No report generated': 0,
+            'Awaiting Signature': 0,
+            'PAYG / Subscription Issue': 0,
+            'Property with no Inspection': 0,
+            'Recently Deleted': 0
+        };
+
+        document.querySelectorAll('.filter-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.filter-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+
+                // Get filter name
+                const filterName = this.childNodes[2].textContent.trim();
+
+                // Show skeleton loading
+                propertyList.classList.remove('empty');
+                propertyList.classList.add('loading');
+
+                // Simulate API call delay
+                setTimeout(() => {
+                    propertyList.classList.remove('loading');
+
+                    // Check if this filter has data
+                    const hasData = filterData[filterName] > 0;
+
+                    if (!hasData) {
+                        // Show empty state with appropriate message
+                        const messages = emptyMessages[filterName] || {
+                            title: 'No Properties Found',
+                            desc: 'There are no properties matching this status. Try selecting a different filter or add a new property.'
+                        };
+                        emptyStateTitle.textContent = messages.title;
+                        emptyStateDesc.textContent = messages.desc;
+                        propertyList.classList.add('empty');
+                    }
+                }, 800); // 800ms loading simulation
+            });
+        });
+
+        // Left sidebar menu functionality
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Get menu item name for demo
+                const menuName = this.textContent.trim().split('\n')[0];
+                console.log('Navigating to:', menuName);
+            });
+        });
+
+        // Search filter button group - Metronic style
+        const filterButtons = document.querySelectorAll('.btn-filter');
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+
+        const placeholders = {
+            'all': 'Search by address, project, reference or inspection name...',
+            'property': 'Search by address, project or reference...',
+            'inspection': 'Search by inspection name...'
+        };
+
+        let currentFilter = 'all';
+
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                filterButtons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentFilter = this.dataset.filter;
+                searchInput.placeholder = placeholders[currentFilter];
+                searchInput.focus();
+            });
+        });
+
+        // Search button click
+        searchBtn.addEventListener('click', function() {
+            const query = searchInput.value.trim();
+            
+            if (query) {
+                // Build search params - backend friendly
+                const searchParams = {
+                    q: query,
+                    filter: currentFilter  // 'all', 'property', or 'inspection'
+                };
+                
+                console.log('Search params:', searchParams);
+                // In real implementation: window.location.href = '/search?' + new URLSearchParams(searchParams);
+                alert('Searching for "' + query + '" in ' + currentFilter);
+            }
+        });
+
+        // Enter key to search
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>
