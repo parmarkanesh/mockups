@@ -27,6 +27,10 @@
             --kt-gray-800: #3F4254;
             --kt-gray-900: #181C32;
             --sidebar-width: 220px;
+            --rating-a: #50CD89;
+            --rating-b: #FFC700;
+            --rating-c: #F6B100;
+            --rating-d: #F1416C;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -97,7 +101,7 @@
         .sidebar.collapsed .sidebar-logo { justify-content: center; padding: 15px 10px; }
         .sidebar.collapsed .sidebar-logo img { width: 40px; height: 40px; }
         .sidebar.collapsed .sidebar-logo span { display: none; }
-        .sidebar-logo span { font-size: 1.1rem; font-weight: 600; color: #50cd89; }
+        .sidebar-logo span { font-size: 1.1rem; font-weight: 600; color: var(--kt-accent); }
 
         .nav-menu { padding: 12px 10px; flex: 1; }
         .nav-item {
@@ -243,132 +247,278 @@
             top: 110px;
             left: var(--sidebar-width);
             right: 0;
-            height: 56px;
+            min-height: 56px;
             background: #fff;
             border-bottom: 1px solid var(--kt-gray-200);
             display: flex;
             align-items: center;
-            padding: 0 20px;
+            padding: 8px 20px;
             gap: 12px;
             z-index: 97;
             transition: left 0.25s ease;
+            flex-wrap: wrap;
         }
 
-        /* Search Box */
-        .toolbar-search {
+        /* Metronic-style Combined Search Box */
+        .search-box-combined {
             display: flex;
             align-items: center;
-            background: var(--kt-gray-100);
+            background: #fff;
             border: 1px solid var(--kt-gray-300);
             border-radius: 6px;
             overflow: hidden;
-            min-width: 220px;
-            height: 38px;
+            transition: all 0.15s ease;
+            padding: 0 2px;
+            height: 44px;
         }
-        .toolbar-search:focus-within {
+        .search-box-combined:focus-within {
             border-color: var(--kt-primary);
             box-shadow: 0 0 0 3px var(--kt-primary-light);
         }
-        .toolbar-search input {
+        .search-input-wrapper {
             flex: 1;
-            border: none;
-            background: transparent;
-            padding: 0 12px;
-            font-size: 0.8125rem;
-            color: var(--kt-gray-700);
-            outline: none;
-            height: 100%;
-        }
-        .toolbar-search input::placeholder { color: var(--kt-gray-400); }
-        .toolbar-search-btn {
-            width: 38px;
-            height: 100%;
-            background: var(--kt-primary);
-            border: none;
-            cursor: pointer;
+            position: relative;
             display: flex;
             align-items: center;
-            justify-content: center;
+        }
+        .search-input-wrapper svg {
+            position: absolute;
+            left: 12px;
+            width: 14px;
+            height: 14px;
+            stroke: var(--kt-gray-400);
+            pointer-events: none;
+        }
+        .search-input-wrapper input {
+            width: 100%;
+            min-width: 280px;
+            padding: 6px 12px 6px 34px;
+            border: none;
+            font-size: 0.8125rem;
+            font-family: inherit;
+            color: var(--kt-gray-800);
+            background: transparent;
+            outline: none;
+        }
+        .search-input-wrapper input::placeholder {
+            color: var(--kt-gray-400);
+        }
+        .btn-group-infix {
+            display: flex;
+            background: var(--kt-gray-100);
+            padding: 2px;
+            margin: 0;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+        .search-divider {
+            width: 1px;
+            height: 20px;
+            background: var(--kt-gray-200);
+            margin: 0 10px;
+            flex-shrink: 0;
+        }
+        .btn-filter {
+            padding: 4px 10px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            border: none;
+            background: transparent;
+            color: var(--kt-gray-600);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border-radius: 3px;
+            white-space: nowrap;
+        }
+        .btn-filter:hover { background: var(--kt-gray-200); }
+        .btn-filter.active {
+            background: var(--kt-primary);
             color: #fff;
-            transition: background 0.15s;
         }
-        .toolbar-search-btn:hover { background: #0f2200; }
-        .toolbar-search-btn svg { width: 16px; height: 16px; stroke: currentColor; }
+        .btn-search {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0 16px;
+            height: 36px;
+            margin-right: 2px;
+            background: var(--kt-primary);
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+        .btn-search:hover { background: #0f2200; }
+        .btn-search svg { width: 14px; height: 14px; stroke: currentColor; }
 
-        /* Toolbar Controls */
-        .toolbar-control {
-            position: relative;
-            height: 38px;
-        }
-        .toolbar-select {
-            height: 100%;
-            padding: 0 32px 0 12px;
+        /* Filter Group Container - Match search box padding */
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0 4px;
+            background: #fff;
             border: 1px solid var(--kt-gray-300);
             border-radius: 6px;
-            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237E8299' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") right 10px center no-repeat;
-            font-size: 0.8125rem;
+            flex-wrap: wrap;
+            height: 44px;
+        }
+        .filter-group-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--kt-gray-600);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .filter-divider {
+            width: 1px;
+            height: 24px;
+            background: var(--kt-gray-300);
+            margin: 0 4px;
+        }
+
+        /* Date Range Section */
+        .date-range-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .date-range-section select {
+            height: 32px;
+            padding: 0 28px 0 10px;
+            border: 1px solid var(--kt-gray-300);
+            border-radius: 4px;
+            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%237E8299' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") right 8px center no-repeat;
+            font-size: 0.75rem;
             color: var(--kt-gray-700);
             cursor: pointer;
             appearance: none;
-            min-width: 130px;
-            transition: all 0.15s;
         }
-        .toolbar-select:hover { border-color: var(--kt-gray-400); }
-        .toolbar-select:focus {
-            outline: none;
-            border-color: var(--kt-primary);
-            box-shadow: 0 0 0 3px var(--kt-primary-light);
+        .custom-date-range {
+            display: none;
+            align-items: center;
+            gap: 6px;
+        }
+        .custom-date-range.show { display: flex; }
+        .custom-date-range input[type="date"] {
+            height: 32px;
+            padding: 0 8px;
+            border: 1px solid var(--kt-gray-300);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: var(--kt-gray-700);
+            background: #fff;
+        }
+        .custom-date-range span {
+            font-size: 0.75rem;
+            color: var(--kt-gray-500);
         }
 
         /* Multi-select dropdown */
         .multiselect-wrapper {
             position: relative;
-            height: 38px;
+            height: 32px;
         }
         .multiselect-btn {
             height: 100%;
-            padding: 0 32px 0 12px;
+            padding: 0 28px 0 10px;
             border: 1px solid var(--kt-gray-300);
-            border-radius: 6px;
-            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237E8299' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") right 10px center no-repeat;
-            font-size: 0.8125rem;
+            border-radius: 4px;
+            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%237E8299' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") right 8px center no-repeat;
+            font-size: 0.75rem;
             color: var(--kt-gray-700);
             cursor: pointer;
-            min-width: 140px;
+            min-width: 100px;
             text-align: left;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             transition: all 0.15s;
         }
         .multiselect-btn:hover { border-color: var(--kt-gray-400); }
         .multiselect-btn.active {
             border-color: var(--kt-primary);
-            box-shadow: 0 0 0 3px var(--kt-primary-light);
+            box-shadow: 0 0 0 2px var(--kt-primary-light);
         }
         .multiselect-badge {
             background: var(--kt-primary);
             color: #fff;
-            font-size: 0.6875rem;
-            padding: 2px 6px;
-            border-radius: 4px;
+            font-size: 0.625rem;
+            padding: 1px 5px;
+            border-radius: 3px;
             font-weight: 600;
         }
         .multiselect-dropdown {
             position: absolute;
             top: calc(100% + 4px);
             left: 0;
-            min-width: 200px;
+            min-width: 280px;
             background: #fff;
             border: 1px solid var(--kt-gray-300);
             border-radius: 6px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             z-index: 1000;
             display: none;
-            max-height: 280px;
+            max-height: 400px;
             overflow-y: auto;
         }
         .multiselect-dropdown.show { display: block; }
+
+        /* Tree View for Inspection Columns */
+        .tree-group {
+            border-bottom: 1px solid var(--kt-gray-200);
+        }
+        .tree-group:last-child { border-bottom: none; }
+        .tree-group-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background: var(--kt-gray-100);
+            cursor: pointer;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--kt-gray-800);
+            user-select: none;
+        }
+        .tree-group-header:hover { background: var(--kt-gray-200); }
+        .tree-group-header svg {
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
+            transition: transform 0.2s;
+        }
+        .tree-group-header.collapsed svg { transform: rotate(-90deg); }
+        .tree-group-header input[type="checkbox"] {
+            width: 14px;
+            height: 14px;
+            accent-color: var(--kt-primary);
+        }
+        .tree-group-items {
+            padding-left: 24px;
+        }
+        .tree-group-items.collapsed { display: none; }
+        .tree-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 14px;
+            cursor: pointer;
+            font-size: 0.8125rem;
+            color: var(--kt-gray-700);
+            transition: background 0.15s;
+        }
+        .tree-item:hover { background: var(--kt-gray-100); }
+        .tree-item input[type="checkbox"] {
+            width: 14px;
+            height: 14px;
+            accent-color: var(--kt-primary);
+            cursor: pointer;
+        }
+
         .multiselect-option {
             display: flex;
             align-items: center;
@@ -381,186 +531,167 @@
         }
         .multiselect-option:hover { background: var(--kt-gray-100); }
         .multiselect-option input[type="checkbox"] {
-            width: 16px;
-            height: 16px;
+            width: 14px;
+            height: 14px;
             accent-color: var(--kt-primary);
             cursor: pointer;
         }
 
-        /* Date Filter Dropdown with Custom Range */
-        .date-filter-wrapper {
-            position: relative;
-            height: 38px;
-        }
-        .date-filter-btn {
-            height: 100%;
-            padding: 0 32px 0 12px;
-            border: 1px solid var(--kt-gray-300);
-            border-radius: 6px;
-            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237E8299' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") right 10px center no-repeat;
-            font-size: 0.8125rem;
-            color: var(--kt-gray-700);
-            cursor: pointer;
-            min-width: 150px;
-            text-align: left;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.15s;
-        }
-        .date-filter-btn:hover { border-color: var(--kt-gray-400); }
-        .date-filter-btn.active {
-            border-color: var(--kt-primary);
-            box-shadow: 0 0 0 3px var(--kt-primary-light);
-        }
-        .date-filter-dropdown {
-            position: absolute;
-            top: calc(100% + 4px);
-            left: 0;
-            min-width: 280px;
-            background: #fff;
-            border: 1px solid var(--kt-gray-300);
-            border-radius: 6px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            z-index: 1000;
-            display: none;
-        }
-        .date-filter-dropdown.show { display: block; }
-        .date-option {
+        /* Rating Option in dropdown */
+        .rating-option {
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 10px 14px;
-            cursor: pointer;
-            font-size: 0.8125rem;
-            color: var(--kt-gray-700);
-            transition: background 0.15s;
         }
-        .date-option:hover { background: var(--kt-gray-100); }
-        .date-option.selected { background: var(--kt-primary-light); color: var(--kt-primary); }
-        .date-option svg { width: 16px; height: 16px; stroke: currentColor; }
-        .date-custom-range {
-            padding: 12px 14px;
-            border-top: 1px solid var(--kt-gray-200);
-            display: none;
+        .rating-option .condition-badge {
+            flex-shrink: 0;
         }
-        .date-custom-range.show { display: block; }
-        .date-custom-range label {
-            display: block;
-            font-size: 0.75rem;
-            color: var(--kt-gray-600);
-            margin-bottom: 4px;
-            font-weight: 500;
+
+        /* Mini Rating Badges for button */
+        .rating-badge-mini {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+            font-size: 0.625rem;
+            font-weight: 700;
+            color: #fff;
         }
-        .date-input-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
+        .rating-badge-mini.rating-a { background: var(--rating-a); }
+        .rating-badge-mini.rating-b { background: var(--rating-b); }
+        .rating-badge-mini.rating-c { background: var(--rating-c); }
+        .rating-badge-mini.rating-d { background: var(--rating-d); }
+
+        #conditionRatingBtn {
+            gap: 3px;
+            padding-left: 6px;
         }
-        .date-input-wrapper {
-            flex: 1;
+        #conditionRatingBtn .multiselect-badge {
+            margin-left: 4px;
         }
-        .date-input-wrapper input {
-            width: 100%;
+
+        /* Apply Button - Inside filter group */
+        .btn-apply {
             height: 36px;
-            padding: 0 10px;
-            border: 1px solid var(--kt-gray-300);
-            border-radius: 6px;
-            font-size: 0.8125rem;
-            color: var(--kt-gray-700);
-        }
-        .date-input-wrapper input:focus {
-            outline: none;
-            border-color: var(--kt-primary);
-            box-shadow: 0 0 0 3px var(--kt-primary-light);
-        }
-        .date-input-wrapper input.error {
-            border-color: var(--kt-danger);
-            box-shadow: 0 0 0 3px var(--kt-danger-light);
-        }
-        .date-error-msg {
-            font-size: 0.6875rem;
-            color: var(--kt-danger);
-            margin-top: 4px;
-            display: none;
-        }
-        .date-error-msg.show { display: block; }
-        .date-apply-btn {
-            width: 100%;
-            height: 36px;
+            padding: 0 16px;
             background: var(--kt-primary);
             color: #fff;
             border: none;
-            border-radius: 6px;
+            border-radius: 4px;
             font-size: 0.8125rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-        .date-apply-btn:hover { background: #0f2200; }
-        .date-apply-btn:disabled {
-            background: var(--kt-gray-300);
-            cursor: not-allowed;
-        }
-
-        /* Export Button */
-        .btn-export {
-            height: 38px;
-            padding: 0 16px;
-            background: var(--kt-success);
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.8125rem;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             transition: background 0.15s;
+            white-space: nowrap;
+            margin-left: 4px;
         }
-        .btn-export:hover { background: #47b97c; }
-        .btn-export svg { width: 16px; height: 16px; stroke: currentColor; }
+        .btn-apply:hover { background: #0f2200; }
+        .btn-apply:disabled {
+            background: var(--kt-gray-300);
+            cursor: not-allowed;
+        }
+        .btn-apply svg { width: 14px; height: 14px; stroke: currentColor; }
 
         .toolbar-spacer { flex: 1; }
 
-        /* Tooltip - BOTTOM position */
-        [data-tooltip] {
+        /* Expand All / Collapse All Button - Icon only with tooltip */
+        .btn-expand-all {
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            background: #fff;
+            color: var(--kt-gray-700);
+            border: 1px solid var(--kt-gray-300);
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
             position: relative;
         }
-        [data-tooltip]::before {
+        .btn-expand-all span { display: none; }
+        .btn-expand-all:hover {
+            background: var(--kt-gray-100);
+            border-color: var(--kt-gray-400);
+        }
+        .btn-expand-all svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            transition: transform 0.2s;
+        }
+        .btn-expand-all.collapsed svg {
+            transform: rotate(-90deg);
+        }
+        /* Tooltip for expand button - Bottom position */
+        .btn-expand-all::after {
             content: attr(data-tooltip);
             position: absolute;
-            top: calc(100% + 8px);
+            top: 100%;
             left: 50%;
             transform: translateX(-50%);
             background: var(--kt-gray-900);
             color: #fff;
-            padding: 6px 10px;
+            padding: 4px 8px;
             border-radius: 4px;
             font-size: 0.6875rem;
             white-space: nowrap;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.15s ease;
-            z-index: 1001;
-            pointer-events: none;
+            transition: all 0.15s;
+            margin-top: 6px;
+            z-index: 100;
         }
-        [data-tooltip]::after {
-            content: '';
+        .btn-expand-all:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Export Button - Icon only with tooltip */
+        .btn-export {
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            background: var(--kt-accent);
+            color: var(--kt-primary);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+            position: relative;
+        }
+        .btn-export:hover { background: #8CD960; }
+        .btn-export svg { width: 16px; height: 16px; stroke: currentColor; }
+        .btn-export span { display: none; }
+        /* Tooltip for export button - Bottom position */
+        .btn-export::after {
+            content: attr(data-tooltip);
             position: absolute;
-            top: calc(100% + 4px);
+            top: 100%;
             left: 50%;
             transform: translateX(-50%);
-            border: 4px solid transparent;
-            border-bottom-color: var(--kt-gray-900);
+            background: var(--kt-gray-900);
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.6875rem;
+            white-space: nowrap;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.15s ease;
-            pointer-events: none;
+            transition: all 0.15s;
+            margin-top: 6px;
+            z-index: 100;
         }
-        [data-tooltip]:hover::before,
-        [data-tooltip]:hover::after {
+        .btn-export:hover::after {
             opacity: 1;
             visibility: visible;
         }
@@ -575,25 +706,33 @@
             padding: 20px;
         }
 
-        /* ========== DATA TABLE ========== */
         .card {
             background: #fff;
             border-radius: 8px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-            position: relative;
         }
-        .card-body { padding: 0; }
+        .card-body {
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
 
         .table-wrapper {
-            overflow-x: auto;
-            position: relative;
+            overflow-x: hidden;
+            overflow-y: visible;
+            flex: 1;
         }
 
         .data-table {
             width: 100%;
-            min-width: 1800px;
             border-collapse: collapse;
             font-size: 0.8125rem;
+            table-layout: fixed;
+        }
+        .data-table thead {
+            position: sticky;
+            top: 0;
+            z-index: 20;
         }
         .data-table th {
             background: var(--kt-gray-100);
@@ -603,38 +742,48 @@
             color: var(--kt-gray-600);
             border-bottom: 1px solid var(--kt-gray-200);
             white-space: nowrap;
-            position: relative;
         }
-        .data-table th.sortable {
-            cursor: pointer;
-            user-select: none;
-        }
-        .data-table th.sortable:hover { color: var(--kt-gray-800); }
-        .data-table th .sort-icon {
-            display: inline-block;
-            margin-left: 4px;
-            opacity: 0.4;
-        }
-        .data-table th.sorted .sort-icon { opacity: 1; color: var(--kt-primary); }
-        .data-table th.sorted.asc .sort-icon::after { content: '↑'; }
-        .data-table th.sorted.desc .sort-icon::after { content: '↓'; }
         .data-table td {
             padding: 12px 16px;
             border-bottom: 1px solid var(--kt-gray-200);
             color: var(--kt-gray-700);
             vertical-align: middle;
             white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
-        .data-table tbody tr:hover { background: var(--kt-gray-100); }
+        /* Property table column widths */
+        .data-table th:first-child,
+        .data-table td:first-child { width: 30%; }
+        .data-table th:last-child,
+        .data-table td:last-child {
+            width: 100px;
+            text-align: right;
+        }
+        .data-table tbody tr:hover:not(.inspection-container) { background: var(--kt-gray-100); }
         .data-table tbody tr:last-child td { border-bottom: none; }
 
-        /* Table Cell Styles */
-        .cell-link {
-            color: var(--kt-primary);
-            text-decoration: none;
+        /* Property action buttons right aligned */
+        .data-table .action-buttons {
+            justify-content: flex-end;
+        }
+
+        /* Property row with expanded inspections */
+        .data-table tbody tr.property-expanded {
+            background: var(--kt-primary-light);
+        }
+        .data-table tbody tr.property-expanded td {
+            border-bottom-color: var(--kt-gray-300);
+        }
+        .data-table tbody tr.property-expanded:hover {
+            background: var(--kt-primary-light);
+        }
+
+        /* Cell Styles - No hyperlinks */
+        .cell-text {
+            color: var(--kt-gray-800);
             font-weight: 500;
         }
-        .cell-link:hover { text-decoration: underline; }
 
         .cell-status {
             display: inline-block;
@@ -645,215 +794,438 @@
         }
         .cell-status.pending { background: var(--kt-warning-light); color: #B59600; }
         .cell-status.uploaded { background: var(--kt-success-light); color: #1B8A5A; }
-        .cell-status.uploading { background: var(--kt-info); background: rgba(114, 57, 234, 0.1); color: var(--kt-info); }
+        .cell-status.uploading { background: rgba(114, 57, 234, 0.1); color: var(--kt-info); }
         .cell-status.transcribing { background: var(--kt-primary-light); color: var(--kt-primary); }
 
-        .cell-indicator {
-            width: 32px;
-            height: 32px;
-            border-radius: 6px;
-            display: flex;
+        /* Minimal Check Icon - Just green check, no background */
+        .cell-check {
+            display: inline-flex;
             align-items: center;
             justify-content: center;
+            width: 20px;
+            height: 20px;
         }
-        .cell-indicator.success { background: var(--kt-success); }
-        .cell-indicator.empty { background: transparent; }
-        .cell-indicator svg { width: 18px; height: 18px; }
+        .cell-check svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--kt-success);
+            stroke-width: 2.5;
+        }
+        .cell-check.empty svg {
+            stroke: var(--kt-gray-300);
+        }
 
         .cell-flag {
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
             border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         .cell-flag.danger { background: var(--kt-danger); }
-        .cell-flag svg { width: 14px; height: 14px; stroke: #fff; }
+        .cell-flag svg { width: 12px; height: 12px; stroke: #fff; }
 
-        .cell-badge {
-            display: inline-block;
-            padding: 4px 8px;
+        /* Condition Rating Badge (renamed from Risk Rating) */
+        .condition-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #fff;
+        }
+        .condition-badge.rating-a { background: var(--rating-a); }
+        .condition-badge.rating-b { background: var(--rating-b); }
+        .condition-badge.rating-c { background: var(--rating-c); }
+        .condition-badge.rating-d { background: var(--rating-d); }
+
+        /* View Button */
+        .btn-view {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 12px;
             border-radius: 4px;
             font-size: 0.75rem;
             font-weight: 500;
+            border: 1px solid var(--kt-gray-300);
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.15s;
+            color: var(--kt-gray-700);
+        }
+        .btn-view:hover {
+            background: var(--kt-gray-100);
+            border-color: var(--kt-gray-400);
+        }
+        .btn-view svg {
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
+        }
+
+        /* Property Action Buttons */
+        .prop-actions {
+            display: flex;
+            gap: 6px;
+        }
+        .prop-action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border: 1px solid var(--kt-gray-300);
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.15s;
+            color: var(--kt-gray-700);
+        }
+        .prop-action-btn:hover {
+            background: var(--kt-gray-100);
+            border-color: var(--kt-gray-400);
+        }
+        .prop-action-btn svg {
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
+        }
+        .prop-action-btn.expand-action {
             background: var(--kt-primary-light);
+            border-color: var(--kt-primary-light);
+            color: var(--kt-primary);
+        }
+        .prop-action-btn.expand-action:hover {
+            background: var(--kt-primary);
+            border-color: var(--kt-primary);
+            color: #fff;
+        }
+        .prop-action-btn.expand-action.expanded {
+            background: var(--kt-primary);
+            border-color: var(--kt-primary);
+            color: #fff;
+        }
+        .prop-action-btn.export-action {
+            background: rgba(159, 232, 112, 0.2);
+            border-color: rgba(159, 232, 112, 0.3);
+            color: var(--kt-primary);
+        }
+        .prop-action-btn.export-action:hover {
+            background: var(--kt-accent);
+            border-color: var(--kt-accent);
             color: var(--kt-primary);
         }
 
-        /* Skeleton Loading Animation */
+        /* Inspection Sub-table - No margin, match property UI */
+        .inspection-container td {
+            padding: 0 !important;
+            background: var(--kt-gray-100);
+        }
+        .sub-table-wrapper {
+            margin: 0;
+            background: #fff;
+            border-top: 1px solid var(--kt-gray-200);
+        }
+        .sub-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8125rem;
+        }
+        .sub-table th {
+            background: var(--kt-gray-100);
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--kt-gray-600);
+            border-bottom: 1px solid var(--kt-gray-200);
+            white-space: nowrap;
+            font-size: 0.75rem;
+        }
+        .sub-table th:first-child {
+            padding-left: 24px;
+        }
+        .sub-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--kt-gray-200);
+            color: var(--kt-gray-700);
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+        .sub-table td:first-child {
+            padding-left: 24px;
+        }
+        .sub-table tbody tr:hover { background: var(--kt-gray-50); }
+        .sub-table tbody tr:last-child td { border-bottom: none; }
+
+        /* Totals row */
+        .totals-row {
+            background: var(--kt-gray-100);
+        }
+        .totals-row td {
+            padding: 12px 16px;
+            border-top: 2px solid var(--kt-gray-300);
+            border-bottom: none !important;
+        }
+        .totals-row td:first-child {
+            padding-left: 24px;
+        }
+
+        /* Filter indicator */
+        .filter-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px 8px 24px;
+            background: var(--kt-primary-light);
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--kt-primary);
+            border-bottom: 1px solid var(--kt-gray-200);
+        }
+        .filter-indicator .rating-badge-mini {
+            margin-left: 2px;
+        }
+
+        /* Filtered cost display */
+        .filtered-cost {
+            color: var(--kt-primary);
+            font-weight: 600;
+        }
+        .total-cost-ref {
+            color: var(--kt-gray-400);
+            font-size: 0.75rem;
+            margin-left: 4px;
+        }
+
+        /* Item count badge */
+        .item-count-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 6px;
+            margin-left: 8px;
+            background: var(--kt-primary-light);
+            color: var(--kt-primary);
+            font-size: 0.625rem;
+            font-weight: 600;
+            border-radius: 10px;
+        }
+
+        /* Flagged count badge */
+        .flagged-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 6px;
+            background: var(--kt-danger);
+            color: #fff;
+            font-size: 0.6875rem;
+            font-weight: 600;
+            border-radius: 10px;
+        }
+
+        /* Small cell text for sections */
+        .cell-text-small {
+            font-size: 0.75rem;
+            color: var(--kt-gray-600);
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: inline-block;
+        }
+
+        /* Items list display */
+        .items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .item-row {
+            display: flex;
+            align-items: center;
+            font-size: 0.75rem;
+            height: 22px;
+            color: var(--kt-gray-700);
+        }
+        .item-row .condition-badge {
+            width: 20px;
+            height: 20px;
+            font-size: 0.65rem;
+        }
+        .item-row .cell-flag {
+            width: 18px;
+            height: 18px;
+        }
+        .item-row .cell-flag svg {
+            width: 10px;
+            height: 10px;
+        }
+
+        /* Skeleton loading */
         @keyframes shimmer {
             0% { background-position: -200% 0; }
             100% { background-position: 200% 0; }
         }
-
         .skeleton {
             background: linear-gradient(90deg, var(--kt-gray-200) 25%, var(--kt-gray-100) 50%, var(--kt-gray-200) 75%);
             background-size: 200% 100%;
             animation: shimmer 1.5s infinite;
             border-radius: 4px;
         }
-
-        /* Skeleton Table Rows */
-        .skeleton-table {
-            display: none;
+        .skeleton-sub-table {
+            width: 100%;
+            background: #fff;
+            overflow: hidden;
         }
-        .skeleton-table.show { display: block; }
-
         .skeleton-row {
             display: flex;
-            align-items: center;
+            gap: 12px;
             padding: 12px 16px;
             border-bottom: 1px solid var(--kt-gray-200);
-            gap: 16px;
         }
-
         .skeleton-cell {
-            height: 14px;
+            height: 16px;
             border-radius: 4px;
         }
+        .skeleton-cell.w-120 { width: 120px; }
+        .skeleton-cell.w-80 { width: 80px; }
+        .skeleton-cell.w-60 { width: 60px; }
+        .skeleton-cell.w-40 { width: 40px; }
 
-        .skeleton-cell.address { width: 220px; }
-        .skeleton-cell.inspection { width: 120px; }
-        .skeleton-cell.date { width: 100px; }
-        .skeleton-cell.status { width: 70px; height: 24px; border-radius: 4px; }
-        .skeleton-cell.indicator { width: 32px; height: 32px; border-radius: 6px; }
-        .skeleton-cell.text-sm { width: 80px; }
-        .skeleton-cell.text-md { width: 100px; }
-        .skeleton-cell.text-lg { width: 140px; }
-
-        /* Loading State Overlay (fallback) */
-        .table-loading {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255,255,255,0.9);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            gap: 16px;
-            z-index: 10;
-        }
-        .table-loading.show { display: flex; }
-
-        /* Error State */
-        .table-error {
-            display: none;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            padding: 60px 20px;
-            text-align: center;
-        }
-        .table-error.show { display: flex; }
-        .table-error-icon {
-            width: 64px;
-            height: 64px;
-            background: var(--kt-danger-light);
+        /* Loading spinner */
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--kt-gray-300);
+            border-top-color: var(--kt-primary);
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 16px;
+            animation: spin 0.8s linear infinite;
         }
-        .table-error-icon svg { width: 32px; height: 32px; stroke: var(--kt-danger); }
-        .table-error h4 {
-            font-size: 1rem;
-            color: var(--kt-gray-800);
-            margin-bottom: 8px;
-        }
-        .table-error p {
-            font-size: 0.875rem;
-            color: var(--kt-gray-500);
-            margin-bottom: 16px;
-        }
-        .table-error .btn-retry {
-            padding: 10px 20px;
-            background: var(--kt-primary);
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.8125rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-        .table-error .btn-retry:hover { background: #0f2200; }
-
-        /* Empty State */
-        .table-empty {
-            display: none;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            padding: 60px 20px;
-            text-align: center;
-        }
-        .table-empty.show { display: flex; }
-        .table-empty-icon {
-            width: 64px;
-            height: 64px;
-            background: var(--kt-gray-200);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 16px;
-        }
-        .table-empty-icon svg { width: 32px; height: 32px; stroke: var(--kt-gray-400); }
-        .table-empty h4 {
-            font-size: 1rem;
-            color: var(--kt-gray-800);
-            margin-bottom: 8px;
-        }
-        .table-empty p {
-            font-size: 0.875rem;
-            color: var(--kt-gray-500);
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
-        /* Hidden columns */
-        .col-hidden { display: none; }
-
-        /* Pagination */
+        /* Table Footer - Pagination - Always visible at bottom */
         .table-footer {
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 16px 20px;
             border-top: 1px solid var(--kt-gray-200);
+            background: #fff;
+            flex-wrap: wrap;
+            gap: 12px;
+            border-radius: 0 0 8px 8px;
+            flex-shrink: 0;
         }
         .table-info {
             font-size: 0.8125rem;
-            color: var(--kt-gray-500);
+            color: var(--kt-gray-600);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
+        .table-info strong { color: var(--kt-gray-800); }
+
+        /* Rows per page selector */
+        .rows-per-page {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8125rem;
+            color: var(--kt-gray-600);
+        }
+        .rows-per-page select {
+            height: 32px;
+            padding: 0 28px 0 10px;
+            border: 1px solid var(--kt-gray-300);
+            border-radius: 4px;
+            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%237E8299' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") right 8px center no-repeat;
+            font-size: 0.8125rem;
+            color: var(--kt-gray-700);
+            cursor: pointer;
+            appearance: none;
+        }
+
+        /* Pagination controls */
         .pagination {
             display: flex;
             align-items: center;
             gap: 4px;
         }
         .pagination-btn {
-            width: 32px;
-            height: 32px;
-            border: 1px solid var(--kt-gray-300);
-            background: #fff;
-            border-radius: 6px;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
+            min-width: 32px;
+            height: 32px;
+            padding: 0 8px;
+            border: 1px solid var(--kt-gray-300);
+            border-radius: 4px;
+            background: #fff;
             font-size: 0.8125rem;
+            font-weight: 500;
             color: var(--kt-gray-700);
+            cursor: pointer;
             transition: all 0.15s;
         }
-        .pagination-btn:hover { background: var(--kt-gray-100); border-color: var(--kt-gray-400); }
-        .pagination-btn.active { background: var(--kt-primary); color: #fff; border-color: var(--kt-primary); }
-        .pagination-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .pagination-btn svg { width: 14px; height: 14px; stroke: currentColor; }
+        .pagination-btn:hover:not(:disabled):not(.active) {
+            background: var(--kt-gray-100);
+            border-color: var(--kt-gray-400);
+        }
+        .pagination-btn.active {
+            background: var(--kt-primary);
+            border-color: var(--kt-primary);
+            color: #fff;
+        }
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .pagination-btn svg {
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
+        }
+        .pagination-ellipsis {
+            padding: 0 4px;
+            color: var(--kt-gray-500);
+            font-size: 0.8125rem;
+        }
 
-        /* Chat button */
+        /* Property count badge */
+        .property-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 6px;
+            background: var(--kt-gray-200);
+            border-radius: 10px;
+            font-size: 0.6875rem;
+            font-weight: 600;
+            color: var(--kt-gray-600);
+            margin-left: 8px;
+        }
+
+        /* Cost value */
+        .cost-value {
+            font-weight: 600;
+            color: var(--kt-gray-800);
+        }
+
+        /* Chat FAB */
         .chat-fab {
             position: fixed;
             bottom: 24px;
@@ -870,6 +1242,341 @@
             z-index: 100;
         }
         .chat-fab svg { width: 24px; height: 24px; stroke: #fff; }
+
+        /* ========== RESPONSIVE STYLES ========== */
+        @media (max-width: 1400px) {
+            .toolbar-ribbon {
+                flex-wrap: wrap;
+                height: auto;
+                padding: 12px 20px;
+                gap: 10px;
+            }
+            .search-date-group {
+                flex: 1;
+                min-width: 300px;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .sidebar { width: 70px; }
+            .sidebar .nav-text, .sidebar .chevron { display: none; }
+            .sidebar .nav-item { justify-content: center; padding: 11px; }
+            .sidebar .sidebar-logo { justify-content: center; padding: 15px 10px; }
+            .sidebar .sidebar-logo img { width: 40px; height: 40px; }
+            .sidebar .sidebar-logo span { display: none; }
+            .sidebar .switch-classic { justify-content: center; padding: 10px; }
+            .sidebar .switch-classic span { display: none; }
+
+            .top-header, .secondary-nav, .toolbar-ribbon { left: 70px; }
+            .main-content { margin-left: 70px; }
+        }
+
+        @media (max-width: 992px) {
+            .filter-group { flex-wrap: wrap; }
+            .search-date-group { min-width: 100%; order: -1; }
+            .data-table { min-width: 800px; }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: var(--sidebar-width);
+            }
+            .sidebar.mobile-open { transform: translateX(0); }
+            .sidebar .nav-text, .sidebar .chevron { display: block; }
+            .sidebar .nav-item { justify-content: flex-start; padding: 11px 14px; }
+            .sidebar .sidebar-logo { justify-content: flex-start; padding: 15px 16px; }
+            .sidebar .sidebar-logo span { display: block; }
+
+            .top-header, .secondary-nav, .toolbar-ribbon { left: 0; }
+            .main-content { margin-left: 0; padding: 15px; }
+
+            .secondary-nav {
+                overflow-x: auto;
+                gap: 8px;
+            }
+            .secondary-nav-item {
+                padding: 6px 10px;
+                font-size: 0.75rem;
+                white-space: nowrap;
+            }
+
+            .toolbar-ribbon {
+                padding: 10px 15px;
+            }
+            .filter-group {
+                width: 100%;
+                padding: 8px;
+            }
+            .multiselect-wrapper {
+                flex: 1;
+                min-width: calc(50% - 4px);
+            }
+            .multiselect-btn {
+                width: 100%;
+                min-width: auto;
+            }
+
+            .btn-apply { width: 100%; justify-content: center; }
+            .btn-export { width: 100%; justify-content: center; }
+
+            .header-nav-item span { display: none; }
+
+            .prop-actions { flex-wrap: wrap; }
+        }
+
+        @media (max-width: 576px) {
+            .main-content {
+                margin-top: 150px;
+                padding: 10px;
+            }
+            .toolbar-ribbon {
+                top: 100px;
+            }
+            .secondary-nav {
+                height: 40px;
+            }
+            .data-table { min-width: 600px; }
+            .data-table th, .data-table td {
+                padding: 8px 10px;
+                font-size: 0.75rem;
+            }
+        }
+
+        /* ========== INSPECTION ITEM ROWS ========== */
+        .insp-first-row td {
+            background: #fff;
+        }
+        .insp-item-row td {
+            background: var(--kt-gray-50, #FCFCFC);
+        }
+
+        /* Property row separator - visual gap between properties */
+        .data-table tbody > tr.inspection-container + tr:not(.inspection-container) {
+            border-top: 8px solid var(--kt-gray-100);
+        }
+
+        /* Flagged indicators */
+        .flag-yes {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3px 8px;
+            background: var(--kt-danger-light);
+            color: var(--kt-danger);
+            font-size: 0.7rem;
+            font-weight: 600;
+            border-radius: 4px;
+        }
+        .flag-no {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3px 8px;
+            background: var(--kt-gray-200);
+            color: var(--kt-gray-500);
+            font-size: 0.7rem;
+            font-weight: 500;
+            border-radius: 4px;
+        }
+
+        /* ========== SUB-TABLE IMPROVEMENTS ========== */
+        /* Property tree container with visual indicator */
+        .inspection-container td {
+            padding: 0 !important;
+            background: #fff;
+            position: relative;
+            overflow: visible;
+        }
+        .sub-table-wrapper {
+            overflow: visible;
+            position: relative;
+            margin-left: 24px;
+            padding-left: 16px;
+            border-left: 2px solid var(--kt-gray-300);
+            background: #fff;
+        }
+        /* Allow tooltips to overflow table rows */
+        .sub-table tbody tr {
+            overflow: visible;
+        }
+        .sub-table td {
+            overflow: visible;
+        }
+
+        /* Sub-table layout */
+        .sub-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+        .sub-table thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .sub-table thead th {
+            background: var(--kt-gray-100);
+            padding: 10px 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--kt-gray-600);
+            border-bottom: 1px solid var(--kt-gray-200);
+            white-space: nowrap;
+        }
+
+        /* Sub-table cells - Increased height and padding */
+        .sub-table td {
+            padding: 14px 12px;
+            border-bottom: 1px solid var(--kt-gray-100);
+            text-align: left;
+            vertical-align: middle;
+            font-size: 0.8125rem;
+            height: 48px;
+        }
+        .sub-table th {
+            text-align: left;
+            padding: 12px 12px;
+        }
+        .sub-table th:first-child,
+        .sub-table td:first-child {
+            padding-left: 16px;
+        }
+        .sub-table th:last-child,
+        .sub-table td:last-child {
+            padding-right: 16px;
+            text-align: right;
+        }
+        .sub-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .sub-table tbody tr:hover td {
+            background: var(--kt-gray-50, #FCFCFC);
+        }
+
+        /* Column widths for proper alignment */
+        .sub-table th.col-name, .sub-table td.col-name { width: 200px; text-align: left; }
+        .sub-table th.col-date, .sub-table td.col-date { width: 100px; text-align: left; }
+        .sub-table th.col-status, .sub-table td.col-status { width: 100px; text-align: left; }
+        .sub-table th.col-pdf, .sub-table td.col-pdf { width: 60px; text-align: center; }
+        .sub-table th.col-inspector, .sub-table td.col-inspector { width: 120px; text-align: left; }
+        .sub-table th.col-section, .sub-table td.col-section { width: 140px; text-align: left; }
+        .sub-table th.col-flagged, .sub-table td.col-flagged { width: 80px; text-align: center; }
+        .sub-table th.col-rating, .sub-table td.col-rating { width: 80px; text-align: center; }
+        .sub-table th.col-cost, .sub-table td.col-cost { width: 100px; text-align: right; }
+        .sub-table th.col-total, .sub-table td.col-total { width: 120px; text-align: right; }
+        .sub-table th.col-check, .sub-table td.col-check { width: 70px; text-align: center; }
+        .sub-table th.col-action, .sub-table td.col-action { width: 120px; text-align: right !important; }
+
+        /* Vertical alignment for rowspan cells */
+        .sub-table td[rowspan] {
+            vertical-align: top;
+            padding-top: 12px;
+        }
+
+        /* Action buttons in sub-table */
+        .sub-table .action-buttons {
+            justify-content: flex-end;
+        }
+
+        /* ========== ICON BUTTONS WITH TOOLTIPS ========== */
+        .btn-icon-action {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            border: 1px solid var(--kt-gray-300);
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.15s;
+            position: relative;
+        }
+        .btn-icon-action svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--kt-gray-600);
+        }
+        .btn-icon-action:hover {
+            background: var(--kt-gray-100);
+            border-color: var(--kt-gray-400);
+        }
+        .btn-icon-action:hover svg {
+            stroke: var(--kt-gray-800);
+        }
+        /* Tooltip */
+        .btn-icon-action::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--kt-gray-900);
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.6875rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.15s;
+            margin-top: 6px;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        .btn-icon-action:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+        /* View button style */
+        .btn-icon-action.view-action {
+            background: var(--kt-primary-light);
+            border-color: var(--kt-primary-light);
+        }
+        .btn-icon-action.view-action svg {
+            stroke: var(--kt-primary);
+        }
+        .btn-icon-action.view-action:hover {
+            background: var(--kt-primary);
+            border-color: var(--kt-primary);
+        }
+        .btn-icon-action.view-action:hover svg {
+            stroke: #fff;
+        }
+        /* Schedule button style - Theme color */
+        .btn-icon-action.schedule-action {
+            background: var(--kt-primary-light);
+            border-color: var(--kt-primary-light);
+        }
+        .btn-icon-action.schedule-action svg {
+            stroke: var(--kt-primary);
+        }
+        .btn-icon-action.schedule-action:hover {
+            background: var(--kt-primary);
+            border-color: var(--kt-primary);
+        }
+        .btn-icon-action.schedule-action:hover svg {
+            stroke: #fff;
+        }
+        /* Export button style */
+        .btn-icon-action.export-action {
+            background: rgba(159, 232, 112, 0.2);
+            border-color: rgba(159, 232, 112, 0.3);
+        }
+        .btn-icon-action.export-action svg {
+            stroke: var(--kt-primary);
+        }
+        .btn-icon-action.export-action:hover {
+            background: var(--kt-accent);
+            border-color: var(--kt-accent);
+        }
+        /* Action buttons container */
+        .action-buttons {
+            display: flex;
+            gap: 6px;
+        }
     </style>
 </head>
 <body class="sidebar-collapsed">
@@ -896,9 +1603,6 @@
                     <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
                 </svg>
                 <span class="nav-text">Shared Reports</span>
-                <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
             </a>
             <a href="#" class="nav-item" data-title="Inspection Settings">
                 <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -906,18 +1610,6 @@
                     <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
                 </svg>
                 <span class="nav-text">Inspection Settings</span>
-                <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
-            </a>
-            <a href="#" class="nav-item" data-title="Report Settings">
-                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
-                    <line x1="16" y1="13" x2="8" y2="13"></line>
-                    <line x1="16" y1="17" x2="8" y2="17"></line>
-                </svg>
-                <span class="nav-text">Report Settings</span>
             </a>
             <a href="#" class="nav-item" data-title="Bookings">
                 <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -928,15 +1620,12 @@
                 </svg>
                 <span class="nav-text">Bookings</span>
             </a>
-            <a href="#" class="nav-item" data-title="Global Settings">
+            <a href="#" class="nav-item" data-title="Settings">
                 <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="3"></circle>
                     <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
                 </svg>
-                <span class="nav-text">Global Settings</span>
-                <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
+                <span class="nav-text">Settings</span>
             </a>
         </nav>
         <div class="sidebar-footer">
@@ -944,7 +1633,7 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="15 18 9 12 15 6"></polyline>
                 </svg>
-                <span>Switch to Imfuna Classic?</span>
+                <span>Switch to Classic</span>
             </div>
         </div>
     </aside>
@@ -952,7 +1641,7 @@
     <!-- TOP HEADER -->
     <header class="top-header">
         <div class="header-left">
-            <button class="collapse-btn">
+            <button class="collapse-btn" id="menuToggle">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="3" y1="12" x2="21" y2="12"></line>
                     <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -960,11 +1649,11 @@
                 </svg>
             </button>
             <a href="properties-full.html" class="header-nav-item">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                     <polyline points="9 22 9 12 15 12 15 22"></polyline>
                 </svg>
-                Home
+                <span>Home</span>
             </a>
         </div>
         <div class="header-right">
@@ -1004,174 +1693,230 @@
                 </svg>
                 Statistics
             </a>
-            <a href="risk-rating.html" class="secondary-nav-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                    <line x1="12" y1="9" x2="12" y2="13"></line>
-                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                </svg>
-                Risk Rating
-            </a>
         </div>
     </nav>
 
     <!-- TOOLBAR RIBBON -->
     <div class="toolbar-ribbon">
-        <!-- Search Box -->
-        <div class="toolbar-search" data-tooltip="Search inspections by address, name, or reference">
-            <input type="text" placeholder="Search..." id="searchInput">
-            <button class="toolbar-search-btn" id="searchBtn">
+        <!-- Search Box - Same as Property screen -->
+        <div class="search-box-combined">
+            <div class="search-input-wrapper">
                 <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="11" cy="11" r="8"></circle>
                     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
-            </button>
-        </div>
-
-        <!-- Status Multi-select -->
-        <div class="multiselect-wrapper" data-tooltip="Filter by inspection status">
-            <button class="multiselect-btn" id="statusBtn">
-                Status <span class="multiselect-badge" id="statusCount">1</span>
-            </button>
-            <div class="multiselect-dropdown" id="statusDropdown">
-                <label class="multiselect-option">
-                    <input type="checkbox" value="Pending" data-status="pending"> Pending
-                </label>
-                <label class="multiselect-option">
-                    <input type="checkbox" value="Uploading" data-status="uploading"> Uploading
-                </label>
-                <label class="multiselect-option">
-                    <input type="checkbox" value="Transcribing" data-status="transcribing"> Transcribing
-                </label>
-                <label class="multiselect-option">
-                    <input type="checkbox" value="Uploaded" data-status="uploaded" checked> Uploaded
-                </label>
+                <input type="text" id="searchInput" placeholder="Search property or inspection...">
             </div>
-        </div>
-
-        <!-- Columns Multi-select -->
-        <div class="multiselect-wrapper" data-tooltip="Show or hide table columns">
-            <button class="multiselect-btn" id="columnsBtn">
-                Columns <span class="multiselect-badge" id="columnsCount">13</span>
-            </button>
-            <div class="multiselect-dropdown" id="columnsDropdown">
-                <label class="multiselect-option">
-                    <input type="checkbox" value="verified" checked> Verified
-                </label>
-                <label class="multiselect-option">
-                    <input type="checkbox" value="pdfDone" checked> PDF Done
-                </label>
-                <label class="multiselect-option">
-                    <input type="checkbox" value="sharedReview" checked> Shared for Review
-                </label>
-                <label class="multiselect-option">
-                    <input type="checkbox" value="commentsBack" checked> Comments back
-                </label>
-                <label class="multiselect-option">
-                    <input type="checkbox" value="sharedEsig" checked> Shared for ESignature
-                </label>
-                <label class="multiselect-option">
-                    <input type="checkbox" value="pdfSigned" checked> PDF Signed
-                </label>
-                <label class="multiselect-option">
-                    <input type="checkbox" value="flagged" checked> Flagged
-                </label>
-                <label class="multiselect-option">
-                    <input type="checkbox" value="inspector" checked> Inspector
-                </label>
-                <label class="multiselect-option">
-                    <input type="checkbox" value="branch" checked> Branch
-                </label>
-                <label class="multiselect-option">
-                    <input type="checkbox" value="postcode" checked> Postcode
-                </label>
-                <label class="multiselect-option">
-                    <input type="checkbox" value="refCode" checked> Reference Code
-                </label>
-                <label class="multiselect-option">
-                    <input type="checkbox" value="partner" checked> Partner
-                </label>
-                <label class="multiselect-option">
-                    <input type="checkbox" value="project" checked> Project
-                </label>
+            <div class="btn-group-infix" role="group">
+                <button type="button" class="btn btn-filter active" data-filter="all">All</button>
+                <button type="button" class="btn btn-filter" data-filter="property">Property</button>
+                <button type="button" class="btn btn-filter" data-filter="inspection">Inspection</button>
             </div>
-        </div>
-
-        <!-- Date Filter -->
-        <div class="date-filter-wrapper" data-tooltip="Filter by date range">
-            <button class="date-filter-btn" id="dateFilterBtn">
-                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;stroke:currentColor">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                    <line x1="3" y1="10" x2="21" y2="10"></line>
+            <div class="search-divider"></div>
+            <button class="btn btn-search" id="searchBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
-                <span id="dateFilterText">This Month</span>
+                Search
             </button>
-            <div class="date-filter-dropdown" id="dateFilterDropdown">
-                <div class="date-option" data-value="week">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                    This Week
+        </div>
+
+        <!-- Filter Group -->
+        <div class="filter-group">
+            <span class="filter-group-label">Filters</span>
+
+            <!-- Property Columns -->
+            <div class="multiselect-wrapper">
+                <button class="multiselect-btn" id="propColumnsBtn">
+                    Property <span class="multiselect-badge" id="propColumnsCount">0</span>
+                </button>
+                <div class="multiselect-dropdown" id="propColumnsDropdown">
+                    <div style="padding: 8px 14px; font-size: 0.7rem; color: var(--kt-gray-500); border-bottom: 1px solid var(--kt-gray-200);">Property Columns</div>
+                    <label class="multiselect-option">
+                        <input type="checkbox" value="partner"> Partner
+                    </label>
+                    <label class="multiselect-option">
+                        <input type="checkbox" value="branch"> Branch
+                    </label>
                 </div>
-                <div class="date-option selected" data-value="month">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                    This Month
-                </div>
-                <div class="date-option" data-value="3months">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                    Last 3 Months
-                </div>
-                <div class="date-option" data-value="6months">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                    Last 6 Months
-                </div>
-                <div class="date-option" data-value="1year">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                    Last 1 Year
-                </div>
-                <div class="date-option" data-value="custom">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                    Custom Range
-                </div>
-                <div class="date-custom-range" id="customDateRange">
-                    <div class="date-input-group">
-                        <div class="date-input-wrapper">
-                            <label>Start Date</label>
-                            <input type="date" id="startDate">
-                            <div class="date-error-msg" id="startDateError">Start date is required</div>
+            </div>
+
+            <!-- Inspection Columns with Tree View -->
+            <div class="multiselect-wrapper">
+                <button class="multiselect-btn" id="inspColumnsBtn">
+                    Inspection <span class="multiselect-badge" id="inspColumnsCount">0</span>
+                </button>
+                <div class="multiselect-dropdown" id="inspColumnsDropdown">
+                    <div style="padding: 8px 14px; font-size: 0.7rem; color: var(--kt-gray-500); border-bottom: 1px solid var(--kt-gray-200);">Inspection Columns</div>
+
+                    <!-- Condition Rating Group -->
+                    <div class="tree-group">
+                        <div class="tree-group-header" data-group="conditionRating">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                            <input type="checkbox" id="groupConditionRating">
+                            <span>Condition Rating</span>
                         </div>
-                        <div class="date-input-wrapper">
-                            <label>End Date</label>
-                            <input type="date" id="endDate">
-                            <div class="date-error-msg" id="endDateError">End date is required</div>
+                        <div class="tree-group-items" id="groupConditionRatingItems">
+                            <label class="tree-item">
+                                <input type="checkbox" value="section" data-group="conditionRating"> Section
+                            </label>
+                            <label class="tree-item">
+                                <input type="checkbox" value="flagged" data-group="conditionRating"> Flagged
+                            </label>
+                            <label class="tree-item">
+                                <input type="checkbox" value="conditionRating" data-group="conditionRating"> Condition Rating
+                            </label>
+                            <label class="tree-item">
+                                <input type="checkbox" value="cost" data-group="conditionRating"> Cost
+                            </label>
+                            <label class="tree-item">
+                                <input type="checkbox" value="totalCost" data-group="conditionRating"> Total Cost
+                            </label>
                         </div>
                     </div>
-                    <div class="date-error-msg" id="dateRangeError">End date must be after start date</div>
-                    <button class="date-apply-btn" id="applyDateRange">Apply Range</button>
+
+                    <!-- Flagged Group -->
+                    <div class="tree-group">
+                        <div class="tree-group-header" data-group="flaggedGroup">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                            <input type="checkbox" id="groupFlagged">
+                            <span>Flagged</span>
+                        </div>
+                        <div class="tree-group-items" id="groupFlaggedItems">
+                            <label class="tree-item">
+                                <input type="checkbox" value="flagSection" data-group="flaggedGroup"> Section
+                            </label>
+                            <label class="tree-item">
+                                <input type="checkbox" value="flagFlagged" data-group="flaggedGroup"> Flagged
+                            </label>
+                            <label class="tree-item">
+                                <input type="checkbox" value="flagCost" data-group="flaggedGroup"> Cost
+                            </label>
+                            <label class="tree-item">
+                                <input type="checkbox" value="flagTotalCost" data-group="flaggedGroup"> Total Cost
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Other Columns -->
+                    <div style="padding: 8px 14px; font-size: 0.7rem; color: var(--kt-gray-500); border-top: 1px solid var(--kt-gray-200);">Other Columns</div>
+                    <label class="multiselect-option">
+                        <input type="checkbox" value="sharedReview"> Shared Review
+                    </label>
+                    <label class="multiselect-option">
+                        <input type="checkbox" value="commentsBack"> Comments Back
+                    </label>
+                    <label class="multiselect-option">
+                        <input type="checkbox" value="sharedEsig"> Shared eSig
+                    </label>
+                    <label class="multiselect-option">
+                        <input type="checkbox" value="pdfSigned"> PDF Signed
+                    </label>
                 </div>
             </div>
+
+            <!-- Status Filter -->
+            <div class="multiselect-wrapper">
+                <button class="multiselect-btn" id="statusBtn">
+                    Status <span class="multiselect-badge" id="statusCount">4</span>
+                </button>
+                <div class="multiselect-dropdown" id="statusDropdown">
+                    <label class="multiselect-option">
+                        <input type="checkbox" value="uploaded" checked> Uploaded
+                    </label>
+                    <label class="multiselect-option">
+                        <input type="checkbox" value="pending" checked> Pending
+                    </label>
+                    <label class="multiselect-option">
+                        <input type="checkbox" value="uploading" checked> Uploading
+                    </label>
+                    <label class="multiselect-option">
+                        <input type="checkbox" value="transcribing" checked> Transcribing
+                    </label>
+                </div>
+            </div>
+
+            <!-- Condition Rating Filter (appears when Condition Rating column is selected) -->
+            <div class="multiselect-wrapper" id="conditionRatingFilterWrapper" style="display: none;">
+                <button class="multiselect-btn" id="conditionRatingBtn">
+                    Condition Rating <span class="multiselect-badge" id="conditionRatingCount">5</span>
+                </button>
+                <div class="multiselect-dropdown" id="conditionRatingDropdown">
+                    <div style="padding: 8px 14px; font-size: 0.7rem; color: var(--kt-gray-500); border-bottom: 1px solid var(--kt-gray-200);">Filter by Condition Rating</div>
+                    <label class="multiselect-option">
+                        <input type="checkbox" value="all" id="conditionRatingAll" checked> All
+                    </label>
+                    <label class="multiselect-option">
+                        <input type="checkbox" value="A" checked> Rating A - Good
+                    </label>
+                    <label class="multiselect-option">
+                        <input type="checkbox" value="B" checked> Rating B - Fair
+                    </label>
+                    <label class="multiselect-option">
+                        <input type="checkbox" value="C" checked> Rating C - Poor
+                    </label>
+                    <label class="multiselect-option">
+                        <input type="checkbox" value="D" checked> Rating D - Critical
+                    </label>
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="filter-divider"></div>
+
+            <!-- Date Range Section -->
+            <div class="date-range-section">
+                <select id="dateRangePreset">
+                    <option value="1year" selected>Last 1 Year</option>
+                    <option value="week">This Week</option>
+                    <option value="month">This Month</option>
+                    <option value="3months">Last 3 Months</option>
+                    <option value="6months">Last 6 Months</option>
+                    <option value="custom">Custom Range</option>
+                </select>
+                <div class="custom-date-range" id="customDateRange">
+                    <input type="date" id="dateFrom" title="From Date">
+                    <span>to</span>
+                    <input type="date" id="dateTo" title="To Date">
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="filter-divider"></div>
+
+            <!-- Apply Button - Inside filter group -->
+            <button class="btn-apply" id="applyFiltersBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                Apply
+            </button>
         </div>
 
-        <!-- Entries per page -->
-        <div class="toolbar-control" data-tooltip="Number of entries per page">
-            <select class="toolbar-select" id="entriesSelect">
-                <option value="10">10 entries</option>
-                <option value="25" selected>25 entries</option>
-                <option value="50">50 entries</option>
-                <option value="100">100 entries</option>
-            </select>
-        </div>
-
+        <!-- Spacer to push buttons to right -->
         <div class="toolbar-spacer"></div>
 
-        <!-- Export Button -->
-        <button class="btn-export" id="exportBtn" data-tooltip="Export data to CSV/Excel">
+        <!-- Expand All / Collapse All Button - Icon with tooltip -->
+        <button class="btn-expand-all" id="expandAllBtn" data-tooltip="Collapse All">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+            <span id="expandAllText">Collapse All</span>
+        </button>
+
+        <!-- Export Button - Icon with tooltip -->
+        <button class="btn-export" id="exportBtn" data-tooltip="Export">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                 <polyline points="7 10 12 15 17 10"></polyline>
                 <line x1="12" y1="15" x2="12" y2="3"></line>
             </svg>
-            Export
+            <span>Export</span>
         </button>
     </div>
 
@@ -1179,866 +1924,840 @@
     <main class="main-content">
         <div class="card">
             <div class="card-body">
-                <!-- Skeleton Loading State -->
-                <div class="skeleton-table" id="skeletonTable">
-                    <div class="table-wrapper">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Address</th>
-                                    <th>Inspection</th>
-                                    <th>Date</th>
-                                    <th>Status</th>
-                                    <th>Verified</th>
-                                    <th>PDF Done</th>
-                                    <th>Shared for Review</th>
-                                    <th>Comments back</th>
-                                    <th>Shared for eSig</th>
-                                    <th>PDF Signed</th>
-                                    <th>Flagged</th>
-                                    <th>Inspector</th>
-                                    <th>Branch</th>
-                                    <th>Postcode</th>
-                                    <th>Ref Code</th>
-                                    <th>Partner</th>
-                                    <th>Project</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><div class="skeleton skeleton-cell address"></div></td>
-                                    <td><div class="skeleton skeleton-cell inspection"></div></td>
-                                    <td><div class="skeleton skeleton-cell date"></div></td>
-                                    <td><div class="skeleton skeleton-cell status"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-md"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-lg"></div></td>
-                                </tr>
-                                <tr>
-                                    <td><div class="skeleton skeleton-cell address" style="width:180px"></div></td>
-                                    <td><div class="skeleton skeleton-cell inspection" style="width:100px"></div></td>
-                                    <td><div class="skeleton skeleton-cell date"></div></td>
-                                    <td><div class="skeleton skeleton-cell status"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm" style="width:60px"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-md"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm" style="width:70px"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-lg" style="width:120px"></div></td>
-                                </tr>
-                                <tr>
-                                    <td><div class="skeleton skeleton-cell address" style="width:250px"></div></td>
-                                    <td><div class="skeleton skeleton-cell inspection" style="width:140px"></div></td>
-                                    <td><div class="skeleton skeleton-cell date"></div></td>
-                                    <td><div class="skeleton skeleton-cell status"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm" style="width:90px"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-md" style="width:110px"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm" style="width:70px"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-lg"></div></td>
-                                </tr>
-                                <tr>
-                                    <td><div class="skeleton skeleton-cell address" style="width:200px"></div></td>
-                                    <td><div class="skeleton skeleton-cell inspection"></div></td>
-                                    <td><div class="skeleton skeleton-cell date"></div></td>
-                                    <td><div class="skeleton skeleton-cell status"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-md"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm" style="width:70px"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-lg" style="width:100px"></div></td>
-                                </tr>
-                                <tr>
-                                    <td><div class="skeleton skeleton-cell address" style="width:190px"></div></td>
-                                    <td><div class="skeleton skeleton-cell inspection" style="width:90px"></div></td>
-                                    <td><div class="skeleton skeleton-cell date"></div></td>
-                                    <td><div class="skeleton skeleton-cell status"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm" style="width:75px"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-md" style="width:95px"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm" style="width:65px"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-lg"></div></td>
-                                </tr>
-                                <tr>
-                                    <td><div class="skeleton skeleton-cell address"></div></td>
-                                    <td><div class="skeleton skeleton-cell inspection" style="width:110px"></div></td>
-                                    <td><div class="skeleton skeleton-cell date"></div></td>
-                                    <td><div class="skeleton skeleton-cell status"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-md"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm" style="width:65px"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm" style="width:60px"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-lg" style="width:130px"></div></td>
-                                </tr>
-                                <tr>
-                                    <td><div class="skeleton skeleton-cell address" style="width:230px"></div></td>
-                                    <td><div class="skeleton skeleton-cell inspection"></div></td>
-                                    <td><div class="skeleton skeleton-cell date"></div></td>
-                                    <td><div class="skeleton skeleton-cell status"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm" style="width:70px"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-md"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-lg"></div></td>
-                                </tr>
-                                <tr>
-                                    <td><div class="skeleton skeleton-cell address" style="width:170px"></div></td>
-                                    <td><div class="skeleton skeleton-cell inspection" style="width:130px"></div></td>
-                                    <td><div class="skeleton skeleton-cell date"></div></td>
-                                    <td><div class="skeleton skeleton-cell status"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-md" style="width:85px"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm" style="width:75px"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm" style="width:65px"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-lg" style="width:110px"></div></td>
-                                </tr>
-                                <tr>
-                                    <td><div class="skeleton skeleton-cell address"></div></td>
-                                    <td><div class="skeleton skeleton-cell inspection"></div></td>
-                                    <td><div class="skeleton skeleton-cell date"></div></td>
-                                    <td><div class="skeleton skeleton-cell status"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm" style="width:85px"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-md"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm" style="width:60px"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-lg"></div></td>
-                                </tr>
-                                <tr>
-                                    <td><div class="skeleton skeleton-cell address" style="width:210px"></div></td>
-                                    <td><div class="skeleton skeleton-cell inspection" style="width:95px"></div></td>
-                                    <td><div class="skeleton skeleton-cell date"></div></td>
-                                    <td><div class="skeleton skeleton-cell status"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell indicator"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-md" style="width:90px"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm" style="width:70px"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-sm" style="width:55px"></div></td>
-                                    <td><div class="skeleton skeleton-cell text-lg" style="width:125px"></div></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="table-footer">
-                        <div class="skeleton skeleton-cell" style="width:180px;height:14px"></div>
-                        <div style="display:flex;gap:4px">
-                            <div class="skeleton" style="width:32px;height:32px;border-radius:6px"></div>
-                            <div class="skeleton" style="width:32px;height:32px;border-radius:6px"></div>
-                            <div class="skeleton" style="width:32px;height:32px;border-radius:6px"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Legacy Loading Overlay (for overlay effects if needed) -->
-                <div class="table-loading" id="tableLoading"></div>
-
-                <!-- Error State -->
-                <div class="table-error" id="tableError">
-                    <div class="table-error-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="8" x2="12" y2="12"></line>
-                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                        </svg>
-                    </div>
-                    <h4>Failed to Load Data</h4>
-                    <p>There was an error loading the inspection data. Please try again.</p>
-                    <button class="btn-retry" id="retryBtn">Try Again</button>
-                </div>
-
-                <!-- Empty State -->
-                <div class="table-empty" id="tableEmpty">
-                    <div class="table-empty-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
-                            <polyline points="13 2 13 9 20 9"></polyline>
-                        </svg>
-                    </div>
-                    <h4>No Results Found</h4>
-                    <p>No inspections match your current filters. Try adjusting your search or filter criteria.</p>
-                </div>
-
-                <!-- Table Wrapper for horizontal scroll -->
-                <div class="table-wrapper" id="tableWrapper">
-                    <table class="data-table" id="dataTable">
-                        <thead>
-                            <tr>
-                                <th class="sortable" data-sort="address">Address <span class="sort-icon">↕</span></th>
-                                <th class="sortable" data-sort="inspection">Inspection <span class="sort-icon">↕</span></th>
-                                <th class="sortable sorted desc" data-sort="date">Date <span class="sort-icon"></span></th>
-                                <th data-sort="status">Status</th>
-                                <th data-col="verified">Verified</th>
-                                <th data-col="pdfDone">PDF Done</th>
-                                <th data-col="sharedReview">Shared for Review</th>
-                                <th data-col="commentsBack">Comments back</th>
-                                <th data-col="sharedEsig">Shared for eSig</th>
-                                <th data-col="pdfSigned">PDF Signed</th>
-                                <th data-col="flagged">Flagged</th>
-                                <th data-col="inspector">Inspector</th>
-                                <th data-col="branch">Branch</th>
-                                <th data-col="postcode">Postcode</th>
-                                <th data-col="refCode">Ref Code</th>
-                                <th data-col="partner">Partner</th>
-                                <th data-col="project">Project</th>
-                            </tr>
+                <div class="table-wrapper">
+                    <table class="data-table" id="summaryTable">
+                        <thead id="tableHead">
+                            <!-- Header rendered by JS -->
                         </thead>
                         <tbody id="tableBody">
-                            <!-- Data will be populated by JavaScript -->
+                            <!-- Data rendered by JS -->
                         </tbody>
                     </table>
                 </div>
+
                 <div class="table-footer" id="tableFooter">
-                    <div class="table-info" id="tableInfo">Showing 1 to 25 of 50 entries</div>
+                    <!-- Rows per page selector -->
+                    <div class="rows-per-page">
+                        <span>Rows per page:</span>
+                        <select id="rowsPerPage">
+                            <option value="10" selected>10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
+
+                    <!-- Table info -->
+                    <div class="table-info">
+                        Showing <strong><span id="showingFrom">1</span></strong> to <strong><span id="showingTo">0</span></strong> of <strong><span id="totalEntries">0</span></strong> properties
+                    </div>
+
+                    <!-- Pagination controls -->
                     <div class="pagination" id="pagination">
-                        <!-- Pagination will be populated by JavaScript -->
+                        <!-- Rendered by JS -->
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- CHAT FAB -->
+    <!-- Chat FAB -->
     <div class="chat-fab">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
         </svg>
     </div>
 
     <script>
-        // ========== SAMPLE DATA ==========
-        const allData = [
-            { id: 1, address: "E.SURV Discovery Gold Street Kettering NN16 8AP", inspection: "Kanesh1", date: "2025-12-14T10:25:00", status: "pending", verified: false, pdfDone: false, sharedReview: false, commentsBack: false, sharedEsig: false, pdfSigned: false, flagged: true, inspector: "Kanesh", branch: "C6 Consultants", postcode: "NN16 8AP", refCode: "D-IM-001", partner: "", project: "C6 CONSULTANTS" },
-            { id: 2, address: "Kanesh", inspection: "13/12/25", date: "2025-12-13T14:46:00", status: "uploaded", verified: false, pdfDone: true, sharedReview: false, commentsBack: false, sharedEsig: false, pdfSigned: false, flagged: false, inspector: "Kanesh", branch: "C6 Consultants", postcode: "", refCode: "", partner: "", project: "C6 CONSULTANTS" },
-            { id: 3, address: "Emperor's Gate 114a Cromwell Road London SW7 4AG", inspection: "New Inspection", date: "2025-12-11T12:09:00", status: "uploaded", verified: false, pdfDone: true, sharedReview: false, commentsBack: false, sharedEsig: false, pdfSigned: false, flagged: false, inspector: "Mark Palmer", branch: "C6 Consultants", postcode: "SW7 4AG", refCode: "Survey_booker", partner: "", project: "C6 CONSULTANTS" },
-            { id: 4, address: "Complete Way 1 Demo Street Matlock DE4 2JW", inspection: "08/12/25 Terminal Dilaps", date: "2025-12-08T14:55:00", status: "uploaded", verified: false, pdfDone: true, sharedReview: false, commentsBack: false, sharedEsig: false, pdfSigned: false, flagged: false, inspector: "Mark Palmer", branch: "C6 Consultants", postcode: "DE4 2JW", refCode: "", partner: "", project: "C6 CONSULTANTS" },
-            { id: 5, address: "Complete Way 1 Demo Street Matlock DE4 2JW", inspection: "08/12/25 Lev 3", date: "2025-12-08T10:09:00", status: "pending", verified: false, pdfDone: false, sharedReview: false, commentsBack: false, sharedEsig: false, pdfSigned: false, flagged: false, inspector: "Mark Palmer", branch: "C6 Consultants", postcode: "DE4 2JW", refCode: "", partner: "", project: "C6 CONSULTANTS" },
-            { id: 6, address: "Complete Way 1 Demo Street Matlock DE4 2JW", inspection: "08/12/25 RICS Lvl 2", date: "2025-12-08T09:55:00", status: "uploaded", verified: false, pdfDone: true, sharedReview: false, commentsBack: false, sharedEsig: false, pdfSigned: false, flagged: false, inspector: "Mark Palmer", branch: "C6 Consultants", postcode: "DE4 2JW", refCode: "", partner: "", project: "C6 CONSULTANTS" },
-            { id: 7, address: "Complete Way 1 Demo Street Matlock DE4 2JW", inspection: "08/12/25 SOC", date: "2025-12-08T09:54:00", status: "pending", verified: false, pdfDone: false, sharedReview: false, commentsBack: false, sharedEsig: false, pdfSigned: false, flagged: false, inspector: "Mark Palmer", branch: "C6 Consultants", postcode: "DE4 2JW", refCode: "", partner: "", project: "C6 CONSULTANTS" },
-            { id: 8, address: "Complete Way 1 Demo Street Matlock DE4 2JW", inspection: "08/12/25 Dilaps", date: "2025-12-08T09:53:00", status: "pending", verified: false, pdfDone: false, sharedReview: false, commentsBack: false, sharedEsig: false, pdfSigned: false, flagged: false, inspector: "Mark Palmer", branch: "C6 Consultants", postcode: "DE4 2JW", refCode: "", partner: "", project: "C6 CONSULTANTS" },
-            { id: 9, address: "Merlin Estates", inspection: "31/10/24 Site Inspection Merlin", date: "2025-12-05T13:14:00", status: "pending", verified: false, pdfDone: false, sharedReview: false, commentsBack: false, sharedEsig: false, pdfSigned: false, flagged: true, inspector: "Kanesh", branch: "C6 Consultants", postcode: "", refCode: "", partner: "", project: "C6 CONSULTANTS" },
-            { id: 10, address: "Merlin Estates", inspection: "Kanesh", date: "2025-12-05T13:14:00", status: "pending", verified: false, pdfDone: false, sharedReview: false, commentsBack: false, sharedEsig: false, pdfSigned: false, flagged: false, inspector: "Kanesh", branch: "C6 Consultants", postcode: "", refCode: "", partner: "", project: "C6 CONSULTANTS" },
-            { id: 11, address: "Kanesh Breezehill Cottage Wellingborough NN84SH", inspection: "Kanesh2", date: "2025-12-04T09:26:00", status: "uploaded", verified: false, pdfDone: true, sharedReview: false, commentsBack: false, sharedEsig: false, pdfSigned: false, flagged: false, inspector: "Kanesh", branch: "C6 Consultants", postcode: "NN84SH", refCode: "REF1223", partner: "", project: "Inspections@nationalpropertygroup.com" },
-            { id: 12, address: "Westminster Bridge Road London SE1 7XW", inspection: "Level 2 Survey", date: "2025-12-03T11:30:00", status: "uploading", verified: false, pdfDone: false, sharedReview: false, commentsBack: false, sharedEsig: false, pdfSigned: false, flagged: false, inspector: "Sarah Jones", branch: "London Office", postcode: "SE1 7XW", refCode: "WBR-001", partner: "ABC Partners", project: "Westminster Project" },
-            { id: 13, address: "Oxford Street London W1D 1BS", inspection: "Commercial Survey", date: "2025-12-02T15:45:00", status: "transcribing", verified: false, pdfDone: false, sharedReview: false, commentsBack: false, sharedEsig: false, pdfSigned: false, flagged: false, inspector: "John Smith", branch: "London Office", postcode: "W1D 1BS", refCode: "OXF-002", partner: "", project: "Oxford Retail" },
-            { id: 14, address: "Manchester Road Bolton BL1 2HJ", inspection: "Residential Survey", date: "2025-12-01T09:00:00", status: "uploaded", verified: true, pdfDone: true, sharedReview: true, commentsBack: false, sharedEsig: false, pdfSigned: false, flagged: false, inspector: "Mike Wilson", branch: "Manchester Office", postcode: "BL1 2HJ", refCode: "MAN-003", partner: "XYZ Corp", project: "Bolton Housing" },
-            { id: 15, address: "Birmingham City Centre B1 1AA", inspection: "Office Inspection", date: "2025-11-30T14:20:00", status: "uploaded", verified: true, pdfDone: true, sharedReview: true, commentsBack: true, sharedEsig: true, pdfSigned: false, flagged: false, inspector: "Emma Brown", branch: "Birmingham Office", postcode: "B1 1AA", refCode: "BHM-004", partner: "", project: "City Centre Dev" },
-            { id: 16, address: "Leeds City Centre LS1 5DQ", inspection: "Retail Unit Survey", date: "2025-11-29T10:15:00", status: "uploaded", verified: true, pdfDone: true, sharedReview: true, commentsBack: true, sharedEsig: true, pdfSigned: true, flagged: false, inspector: "David Lee", branch: "Leeds Office", postcode: "LS1 5DQ", refCode: "LDS-005", partner: "Retail Group", project: "Leeds Retail" },
-            { id: 17, address: "Newcastle Quayside NE1 3DX", inspection: "Warehouse Inspection", date: "2025-11-28T16:00:00", status: "pending", verified: false, pdfDone: false, sharedReview: false, commentsBack: false, sharedEsig: false, pdfSigned: false, flagged: true, inspector: "Chris Taylor", branch: "Newcastle Office", postcode: "NE1 3DX", refCode: "NCL-006", partner: "", project: "Quayside Industrial" },
-            { id: 18, address: "Bristol Harbourside BS1 5DB", inspection: "Apartment Survey", date: "2025-11-27T11:45:00", status: "uploaded", verified: false, pdfDone: true, sharedReview: false, commentsBack: false, sharedEsig: false, pdfSigned: false, flagged: false, inspector: "Laura White", branch: "Bristol Office", postcode: "BS1 5DB", refCode: "BRS-007", partner: "Harbour Dev", project: "Harbourside Living" },
-            { id: 19, address: "Edinburgh Royal Mile EH1 1RE", inspection: "Historic Building Survey", date: "2025-11-26T13:30:00", status: "uploaded", verified: true, pdfDone: true, sharedReview: true, commentsBack: false, sharedEsig: false, pdfSigned: false, flagged: false, inspector: "James Scott", branch: "Edinburgh Office", postcode: "EH1 1RE", refCode: "EDI-008", partner: "", project: "Royal Mile Heritage" },
-            { id: 20, address: "Glasgow City Centre G2 1DY", inspection: "Commercial Premises", date: "2025-11-25T09:30:00", status: "pending", verified: false, pdfDone: false, sharedReview: false, commentsBack: false, sharedEsig: false, pdfSigned: false, flagged: false, inspector: "Amy McDonald", branch: "Glasgow Office", postcode: "G2 1DY", refCode: "GLA-009", partner: "City Investments", project: "Glasgow Commercial" },
-            { id: 21, address: "Cardiff Bay CF10 4PA", inspection: "Marina Development", date: "2025-11-24T14:00:00", status: "uploaded", verified: false, pdfDone: true, sharedReview: false, commentsBack: false, sharedEsig: false, pdfSigned: false, flagged: false, inspector: "Owen Davies", branch: "Cardiff Office", postcode: "CF10 4PA", refCode: "CDF-010", partner: "", project: "Bay Development" },
-            { id: 22, address: "Liverpool Waterfront L3 1BY", inspection: "Hotel Survey", date: "2025-11-23T10:00:00", status: "uploading", verified: false, pdfDone: false, sharedReview: false, commentsBack: false, sharedEsig: false, pdfSigned: false, flagged: false, inspector: "Peter Hughes", branch: "Liverpool Office", postcode: "L3 1BY", refCode: "LIV-011", partner: "Hotel Group", project: "Waterfront Hotel" },
-            { id: 23, address: "Sheffield City Centre S1 2GJ", inspection: "Student Accommodation", date: "2025-11-22T15:30:00", status: "transcribing", verified: false, pdfDone: false, sharedReview: false, commentsBack: false, sharedEsig: false, pdfSigned: false, flagged: false, inspector: "Rachel Green", branch: "Sheffield Office", postcode: "S1 2GJ", refCode: "SHF-012", partner: "", project: "Student Living" },
-            { id: 24, address: "Nottingham Market Square NG1 2BY", inspection: "Retail Assessment", date: "2025-11-21T11:15:00", status: "uploaded", verified: true, pdfDone: true, sharedReview: true, commentsBack: true, sharedEsig: false, pdfSigned: false, flagged: false, inspector: "Tom Clark", branch: "Nottingham Office", postcode: "NG1 2BY", refCode: "NOT-013", partner: "Retail Partners", project: "Market Square" },
-            { id: 25, address: "Southampton Docks SO14 3FJ", inspection: "Industrial Unit", date: "2025-11-20T08:45:00", status: "uploaded", verified: true, pdfDone: true, sharedReview: true, commentsBack: true, sharedEsig: true, pdfSigned: true, flagged: false, inspector: "Helen Moore", branch: "Southampton Office", postcode: "SO14 3FJ", refCode: "SOU-014", partner: "", project: "Docks Industrial" },
+        // Icons - Minimal check (no background)
+        const checkIcon = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+        const flagIcon = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>';
+        const viewIcon = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+        const exportIcon = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>';
+        const collapseIcon = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+
+        // Sample data
+        const propertiesData = [
+            {
+                id: 1,
+                address: '123 High Street, London',
+                postcode: 'SW1A 1AA',
+                refCode: 'REF-001',
+                project: 'London Portfolio',
+                partner: 'ABC Partners',
+                branch: 'Central London',
+                inspections: [
+                    { id: 101, name: 'Annual Inspection', date: '2025-12-15', status: 'uploaded', pdfDone: true, inspector: 'John Smith', items: [{section: 'Wall', flagged: false, rating: 'A', cost: 500}, {section: 'Window', flagged: true, rating: 'B', cost: 1000}, {section: 'Kitchen', flagged: false, rating: 'A', cost: 500}, {section: 'Door', flagged: false, rating: 'C', cost: 1500}, {section: 'Bathroom', flagged: true, rating: 'B', cost: 1000}], nextInspection: '2026-12-15', scheduleFreq: 12, sharedReview: true, commentsBack: true, sharedEsig: true, pdfSigned: true },
+                    { id: 102, name: 'Mid-Year Check', date: '2025-06-10', status: 'uploaded', pdfDone: true, inspector: 'Jane Doe', items: [{section: 'Wall', flagged: false, rating: 'A', cost: 500}, {section: 'Ceiling', flagged: false, rating: 'A', cost: 500}, {section: 'Floor', flagged: false, rating: 'B', cost: 1000}, {section: 'Window', flagged: false, rating: 'A', cost: 500}, {section: 'Door', flagged: false, rating: 'A', cost: 500}], nextInspection: '2026-06-10', scheduleFreq: 6, sharedReview: true, commentsBack: false, sharedEsig: false, pdfSigned: false }
+                ]
+            },
+            {
+                id: 2,
+                address: '45 Park Lane, Manchester',
+                postcode: 'M1 4BT',
+                refCode: 'REF-002',
+                project: 'Northern Assets',
+                partner: 'XYZ Holdings',
+                branch: 'Manchester',
+                inspections: [
+                    { id: 201, name: 'Quarterly Review', date: '2025-12-01', status: 'pending', pdfDone: false, inspector: 'Mike Wilson', items: [{section: 'Kitchen', flagged: true, rating: 'C', cost: 1500}, {section: 'Bathroom', flagged: true, rating: 'D', cost: 2000}, {section: 'Bedroom', flagged: true, rating: 'C', cost: 1500}, {section: 'Living Room', flagged: false, rating: 'B', cost: 1000}, {section: 'Hallway', flagged: true, rating: 'D', cost: 2000}], nextInspection: '2026-03-01', scheduleFreq: 3, sharedReview: false, commentsBack: false, sharedEsig: false, pdfSigned: false }
+                ]
+            },
+            {
+                id: 3,
+                address: '78 Queen Street, Edinburgh',
+                postcode: 'EH2 3NS',
+                refCode: 'REF-003',
+                project: 'Scottish Portfolio',
+                partner: 'ABC Partners',
+                branch: 'Edinburgh',
+                inspections: [
+                    { id: 301, name: 'Full Survey', date: '2025-06-20', status: 'uploaded', pdfDone: true, inspector: 'Sarah Brown', items: [{section: 'Wall', flagged: false, rating: 'B', cost: 1000}, {section: 'Window', flagged: false, rating: 'A', cost: 500}, {section: 'Roof', flagged: false, rating: 'B', cost: 1000}, {section: 'Foundation', flagged: false, rating: 'A', cost: 500}, {section: 'Garage', flagged: false, rating: 'A', cost: 500}], nextInspection: '2026-06-20', scheduleFreq: 12, sharedReview: true, commentsBack: true, sharedEsig: true, pdfSigned: false }
+                ]
+            },
+            {
+                id: 4,
+                address: '22 Castle Road, Bristol',
+                postcode: 'BS1 3AD',
+                refCode: 'REF-004',
+                project: 'South West Fund',
+                partner: 'DEF Capital',
+                branch: 'Bristol',
+                inspections: [
+                    { id: 401, name: 'Initial Assessment', date: '2025-12-10', status: 'transcribing', pdfDone: false, inspector: 'Emily Jones', items: [{section: 'Wall', flagged: false, rating: 'B', cost: 1000}, {section: 'Ceiling', flagged: false, rating: 'A', cost: 500}, {section: 'Floor', flagged: false, rating: 'B', cost: 1000}, {section: 'Kitchen', flagged: false, rating: 'A', cost: 500}, {section: 'Bathroom', flagged: false, rating: 'A', cost: 500}], nextInspection: '2026-06-10', scheduleFreq: 6, sharedReview: false, commentsBack: false, sharedEsig: false, pdfSigned: false }
+                ]
+            },
+            {
+                id: 5,
+                address: '15 Bridge Street, Birmingham',
+                postcode: 'B1 2JB',
+                refCode: 'REF-005',
+                project: 'Midlands Trust',
+                partner: 'GHI Investments',
+                branch: 'Birmingham',
+                inspections: [
+                    { id: 501, name: 'Compliance Check', date: '2025-07-28', status: 'uploaded', pdfDone: true, inspector: 'David Lee', items: [{section: 'Fire Safety', flagged: true, rating: 'D', cost: 2000}, {section: 'Electrical', flagged: true, rating: 'C', cost: 1500}, {section: 'Plumbing', flagged: false, rating: 'B', cost: 1000}, {section: 'HVAC', flagged: true, rating: 'C', cost: 1500}, {section: 'Structure', flagged: true, rating: 'D', cost: 2000}], nextInspection: '2026-07-28', scheduleFreq: 3, sharedReview: true, commentsBack: true, sharedEsig: true, pdfSigned: true }
+                ]
+            }
         ];
 
-        // ========== STATE ==========
-        let filteredData = [...allData];
+        // State
+        const expandedRows = new Set();
+        const loadingRows = new Set();
+        let rowsPerPage = 10;
         let currentPage = 1;
-        let entriesPerPage = 25;
-        let sortColumn = 'date';
-        let sortDirection = 'desc';
-        let searchQuery = '';
-        let selectedStatuses = ['uploaded'];
-        let visibleColumns = ['verified', 'pdfDone', 'sharedReview', 'commentsBack', 'sharedEsig', 'pdfSigned', 'flagged', 'inspector', 'branch', 'postcode', 'refCode', 'partner', 'project'];
-        let dateFilter = 'month';
-        let customStartDate = null;
-        let customEndDate = null;
+        let searchTerm = '';
+        let currentSearchFilter = 'all';
+        let currentDateRange = '1year';
+        let pendingFilters = false;
+        let allExpanded = true; // Default: all expanded
 
-        // ========== DOM ELEMENTS ==========
-        const tableBody = document.getElementById('tableBody');
-        const skeletonTable = document.getElementById('skeletonTable');
-        const tableLoading = document.getElementById('tableLoading');
-        const tableError = document.getElementById('tableError');
-        const tableEmpty = document.getElementById('tableEmpty');
-        const tableWrapper = document.getElementById('tableWrapper');
-        const tableFooter = document.getElementById('tableFooter');
-        const tableInfo = document.getElementById('tableInfo');
-        const pagination = document.getElementById('pagination');
+        // Initialize expanded rows with all properties
+        propertiesData.forEach(p => expandedRows.add(p.id));
+
+        // Sidebar toggle
+        const sidebar = document.querySelector('.sidebar');
+        const menuToggle = document.getElementById('menuToggle');
+
+        menuToggle.addEventListener('click', () => {
+            if (window.innerWidth <= 768) {
+                sidebar.classList.toggle('mobile-open');
+            } else {
+                sidebar.classList.toggle('collapsed');
+                document.body.classList.toggle('sidebar-collapsed');
+            }
+        });
+
+        // Search filter buttons (All/Property/Inspection)
+        const searchFilterBtns = document.querySelectorAll('.btn-filter');
         const searchInput = document.getElementById('searchInput');
-        const searchBtn = document.getElementById('searchBtn');
-        const entriesSelect = document.getElementById('entriesSelect');
-        const retryBtn = document.getElementById('retryBtn');
-        const exportBtn = document.getElementById('exportBtn');
+        const placeholders = {
+            'all': 'Search property or inspection...',
+            'property': 'Search by address, project or reference...',
+            'inspection': 'Search by inspection name...'
+        };
 
-        // ========== UTILITY FUNCTIONS ==========
-        function formatDate(dateStr) {
-            const date = new Date(dateStr);
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const year = date.getFullYear();
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            return `${day}/${month}/${year} ${hours}:${minutes}`;
+        searchFilterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                searchFilterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentSearchFilter = btn.dataset.filter;
+                searchInput.placeholder = placeholders[currentSearchFilter];
+                searchInput.focus();
+                pendingFilters = true;
+            });
+        });
+
+        // Search input
+        searchInput.addEventListener('input', (e) => {
+            searchTerm = e.target.value;
+            pendingFilters = true;
+        });
+
+        // Search button click
+        document.getElementById('searchBtn').addEventListener('click', () => {
+            currentPage = 1;
+            // Keep all expanded - re-expand for filtered results
+            expandAllOnCurrentPage();
+            renderTable();
+            pendingFilters = false;
+        });
+
+        // Helper to expand all on current page
+        function expandAllOnCurrentPage() {
+            const filteredData = getFilteredProperties();
+            const startIndex = (currentPage - 1) * rowsPerPage;
+            const endIndex = Math.min(startIndex + rowsPerPage, filteredData.length);
+            const displayData = filteredData.slice(startIndex, endIndex);
+            displayData.forEach(p => expandedRows.add(p.id));
+            allExpanded = true;
         }
 
-        function getDateRange(filter) {
-            const now = new Date();
-            let start = new Date();
-
-            switch(filter) {
-                case 'week':
-                    start.setDate(now.getDate() - 7);
-                    break;
-                case 'month':
-                    start.setMonth(now.getMonth() - 1);
-                    break;
-                case '3months':
-                    start.setMonth(now.getMonth() - 3);
-                    break;
-                case '6months':
-                    start.setMonth(now.getMonth() - 6);
-                    break;
-                case '1year':
-                    start.setFullYear(now.getFullYear() - 1);
-                    break;
-                case 'custom':
-                    return { start: customStartDate, end: customEndDate };
-                default:
-                    start = null;
+        // Enter key to search
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('searchBtn').click();
             }
+        });
 
-            return { start, end: now };
+        // Date range preset
+        const dateRangePreset = document.getElementById('dateRangePreset');
+        const customDateRange = document.getElementById('customDateRange');
+
+        dateRangePreset.addEventListener('change', (e) => {
+            currentDateRange = e.target.value;
+            if (e.target.value === 'custom') {
+                customDateRange.classList.add('show');
+            } else {
+                customDateRange.classList.remove('show');
+            }
+            pendingFilters = true;
+        });
+
+        // Custom date range inputs
+        document.getElementById('dateFrom').addEventListener('change', () => { pendingFilters = true; });
+        document.getElementById('dateTo').addEventListener('change', () => { pendingFilters = true; });
+
+        // Apply filters button
+        document.getElementById('applyFiltersBtn').addEventListener('click', () => {
+            currentPage = 1;
+            loadingRows.clear();
+            // Keep all expanded - re-expand for filtered results
+            expandAllOnCurrentPage();
+            renderTable();
+            pendingFilters = false;
+        });
+
+        // Tree group toggle
+        document.querySelectorAll('.tree-group-header').forEach(header => {
+            header.addEventListener('click', (e) => {
+                if (e.target.type === 'checkbox') return;
+                header.classList.toggle('collapsed');
+                const items = header.nextElementSibling;
+                items.classList.toggle('collapsed');
+            });
+
+            // Group checkbox
+            const groupCheckbox = header.querySelector('input[type="checkbox"]');
+            groupCheckbox.addEventListener('change', () => {
+                const items = header.nextElementSibling.querySelectorAll('input[type="checkbox"]');
+                items.forEach(item => item.checked = groupCheckbox.checked);
+                updateInspColumnsCount();
+                updateConditionRatingFilterVisibility();
+                pendingFilters = true;
+            });
+        });
+
+        // Individual tree item checkboxes
+        document.querySelectorAll('.tree-item input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                updateInspColumnsCount();
+                updateConditionRatingFilterVisibility();
+                pendingFilters = true;
+            });
+        });
+
+        function updateInspColumnsCount() {
+            const checked = document.querySelectorAll('#inspColumnsDropdown input[type="checkbox"]:checked').length;
+            document.getElementById('inspColumnsCount').textContent = checked;
         }
 
-        // ========== FILTER & SORT FUNCTIONS ==========
-        function filterData() {
-            let data = [...allData];
+        // Show/hide Condition Rating filter based on column selection
+        function updateConditionRatingFilterVisibility() {
+            const conditionRatingCheckbox = document.querySelector('#inspColumnsDropdown input[value="conditionRating"]');
+            const conditionRatingFilterWrapper = document.getElementById('conditionRatingFilterWrapper');
 
-            // Filter by status
-            if (selectedStatuses.length > 0) {
-                data = data.filter(item => selectedStatuses.includes(item.status));
+            if (conditionRatingCheckbox && conditionRatingCheckbox.checked) {
+                conditionRatingFilterWrapper.style.display = 'block';
+            } else {
+                conditionRatingFilterWrapper.style.display = 'none';
             }
+        }
 
-            // Filter by search query
-            if (searchQuery) {
-                const query = searchQuery.toLowerCase();
-                data = data.filter(item =>
-                    item.address.toLowerCase().includes(query) ||
-                    item.inspection.toLowerCase().includes(query) ||
-                    item.inspector.toLowerCase().includes(query) ||
-                    item.refCode.toLowerCase().includes(query) ||
-                    item.postcode.toLowerCase().includes(query)
+        // Update Condition Rating filter count
+        function updateConditionRatingCount() {
+            const checked = document.querySelectorAll('#conditionRatingDropdown input:not(#conditionRatingAll):checked').length;
+            document.getElementById('conditionRatingCount').textContent = checked;
+        }
+
+        // Get selected condition ratings for filtering (exclude 'all')
+        function getSelectedConditionRatings() {
+            return Array.from(document.querySelectorAll('#conditionRatingDropdown input:not(#conditionRatingAll):checked')).map(cb => cb.value);
+        }
+
+        // Dropdown handlers
+        function setupDropdown(btnId, dropdownId) {
+            const btn = document.getElementById(btnId);
+            const dropdown = document.getElementById(dropdownId);
+            if (!btn || !dropdown) return;
+
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                btn.classList.toggle('active');
+                dropdown.classList.toggle('show');
+                document.querySelectorAll('.multiselect-dropdown').forEach(d => {
+                    if (d !== dropdown) d.classList.remove('show');
+                });
+                document.querySelectorAll('.multiselect-btn').forEach(b => {
+                    if (b !== btn) b.classList.remove('active');
+                });
+            });
+        }
+
+        setupDropdown('propColumnsBtn', 'propColumnsDropdown');
+        setupDropdown('inspColumnsBtn', 'inspColumnsDropdown');
+        setupDropdown('statusBtn', 'statusDropdown');
+        setupDropdown('conditionRatingBtn', 'conditionRatingDropdown');
+
+        // Close dropdowns on outside click
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.multiselect-dropdown').forEach(d => d.classList.remove('show'));
+            document.querySelectorAll('.multiselect-btn').forEach(b => b.classList.remove('active'));
+        });
+
+        // Filter checkbox handlers
+        document.querySelectorAll('#propColumnsDropdown input, #statusDropdown input').forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                pendingFilters = true;
+                // Update counts
+                const propCount = document.querySelectorAll('#propColumnsDropdown input:checked').length;
+                const statusCount = document.querySelectorAll('#statusDropdown input:checked').length;
+                document.getElementById('propColumnsCount').textContent = propCount;
+                document.getElementById('statusCount').textContent = statusCount;
+            });
+        });
+
+        // Condition Rating filter checkbox handlers
+        const conditionRatingAllCheckbox = document.getElementById('conditionRatingAll');
+        const conditionRatingCheckboxes = document.querySelectorAll('#conditionRatingDropdown input:not(#conditionRatingAll)');
+
+        conditionRatingAllCheckbox.addEventListener('change', () => {
+            const isChecked = conditionRatingAllCheckbox.checked;
+            conditionRatingCheckboxes.forEach(cb => cb.checked = isChecked);
+            pendingFilters = true;
+            updateConditionRatingCount();
+        });
+
+        conditionRatingCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                // Update "All" checkbox based on individual selections
+                const allChecked = Array.from(conditionRatingCheckboxes).every(cb => cb.checked);
+                const noneChecked = Array.from(conditionRatingCheckboxes).every(cb => !cb.checked);
+                conditionRatingAllCheckbox.checked = allChecked;
+                conditionRatingAllCheckbox.indeterminate = !allChecked && !noneChecked;
+                pendingFilters = true;
+                updateConditionRatingCount();
+            });
+        });
+
+        // Get filtered properties
+        function getFilteredProperties() {
+            let filtered = [...propertiesData];
+
+            if (searchTerm) {
+                const term = searchTerm.toLowerCase();
+                filtered = filtered.filter(p =>
+                    p.address.toLowerCase().includes(term) ||
+                    p.postcode.toLowerCase().includes(term) ||
+                    p.refCode.toLowerCase().includes(term) ||
+                    p.project.toLowerCase().includes(term)
                 );
             }
 
-            // Filter by date range
-            const dateRange = getDateRange(dateFilter);
-            if (dateRange.start) {
-                data = data.filter(item => {
-                    const itemDate = new Date(item.date);
-                    return itemDate >= dateRange.start && itemDate <= dateRange.end;
-                });
+            // Status filter
+            const selectedStatuses = Array.from(document.querySelectorAll('#statusDropdown input:checked')).map(cb => cb.value);
+            if (selectedStatuses.length > 0 && selectedStatuses.length < 4) {
+                filtered = filtered.filter(p =>
+                    p.inspections.some(i => selectedStatuses.includes(i.status))
+                );
             }
 
-            // Sort data
-            data.sort((a, b) => {
-                let aVal = a[sortColumn];
-                let bVal = b[sortColumn];
-
-                if (sortColumn === 'date') {
-                    aVal = new Date(aVal);
-                    bVal = new Date(bVal);
-                }
-
-                if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
-                if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
-                return 0;
-            });
-
-            filteredData = data;
-            currentPage = 1;
-            renderTable();
+            return filtered;
         }
 
-        // ========== RENDER FUNCTIONS ==========
-        function renderTable() {
-            const start = (currentPage - 1) * entriesPerPage;
-            const end = start + entriesPerPage;
-            const pageData = filteredData.slice(start, end);
+        // Check if condition rating filter is active
+        function isConditionRatingFilterActive() {
+            const conditionRatingCheckbox = document.querySelector('#inspColumnsDropdown input[value="conditionRating"]');
+            return conditionRatingCheckbox && conditionRatingCheckbox.checked;
+        }
 
-            // Update column visibility
-            document.querySelectorAll('[data-col]').forEach(el => {
-                const col = el.getAttribute('data-col');
-                if (visibleColumns.includes(col)) {
-                    el.classList.remove('col-hidden');
-                } else {
-                    el.classList.add('col-hidden');
-                }
-            });
-
-            // Show/hide states
-            tableWrapper.style.display = filteredData.length > 0 ? 'block' : 'none';
-            tableFooter.style.display = filteredData.length > 0 ? 'flex' : 'none';
-            tableEmpty.classList.toggle('show', filteredData.length === 0);
-
-            if (filteredData.length === 0) {
-                tableBody.innerHTML = '';
-                return;
+        // Get filtered items based on condition rating
+        function getFilteredItems(items) {
+            if (!isConditionRatingFilterActive()) {
+                return items;
             }
+            const selectedRatings = getSelectedConditionRatings();
+            if (selectedRatings.length === 4) {
+                return items; // All selected, no filtering needed
+            }
+            return items.filter(item => selectedRatings.includes(item.rating));
+        }
 
-            // Tick icon SVG
-            const tickIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+        // Get inspection cost (filtered by condition rating if active)
+        function getInspectionCost(inspection) {
+            const filteredItems = getFilteredItems(inspection.items);
+            return filteredItems.reduce((sum, item) => sum + item.cost, 0);
+        }
 
-            // Render rows
-            tableBody.innerHTML = pageData.map(item => `
-                <tr data-id="${item.id}">
-                    <td><a href="#" class="cell-link">${item.address}</a></td>
-                    <td><a href="#" class="cell-link">${item.inspection}</a></td>
-                    <td>${formatDate(item.date)}</td>
-                    <td><span class="cell-status ${item.status}">${item.status.charAt(0).toUpperCase() + item.status.slice(1)}</span></td>
-                    <td class="${visibleColumns.includes('verified') ? '' : 'col-hidden'}" data-col="verified">${item.verified ? '<div class="cell-indicator success">' + tickIcon + '</div>' : ''}</td>
-                    <td class="${visibleColumns.includes('pdfDone') ? '' : 'col-hidden'}" data-col="pdfDone">${item.pdfDone ? '<div class="cell-indicator success">' + tickIcon + '</div>' : ''}</td>
-                    <td class="${visibleColumns.includes('sharedReview') ? '' : 'col-hidden'}" data-col="sharedReview">${item.sharedReview ? '<div class="cell-indicator success">' + tickIcon + '</div>' : ''}</td>
-                    <td class="${visibleColumns.includes('commentsBack') ? '' : 'col-hidden'}" data-col="commentsBack">${item.commentsBack ? '<div class="cell-indicator success">' + tickIcon + '</div>' : ''}</td>
-                    <td class="${visibleColumns.includes('sharedEsig') ? '' : 'col-hidden'}" data-col="sharedEsig">${item.sharedEsig ? '<div class="cell-indicator success">' + tickIcon + '</div>' : ''}</td>
-                    <td class="${visibleColumns.includes('pdfSigned') ? '' : 'col-hidden'}" data-col="pdfSigned">${item.pdfSigned ? '<div class="cell-indicator success">' + tickIcon + '</div>' : ''}</td>
-                    <td class="${visibleColumns.includes('flagged') ? '' : 'col-hidden'}" data-col="flagged">${item.flagged ? '<div class="cell-flag danger"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg></div>' : ''}</td>
-                    <td class="${visibleColumns.includes('inspector') ? '' : 'col-hidden'}" data-col="inspector">${item.inspector}</td>
-                    <td class="${visibleColumns.includes('branch') ? '' : 'col-hidden'}" data-col="branch">${item.branch}</td>
-                    <td class="${visibleColumns.includes('postcode') ? '' : 'col-hidden'}" data-col="postcode">${item.postcode}</td>
-                    <td class="${visibleColumns.includes('refCode') ? '' : 'col-hidden'}" data-col="refCode">${item.refCode ? `<span class="cell-badge">${item.refCode}</span>` : ''}</td>
-                    <td class="${visibleColumns.includes('partner') ? '' : 'col-hidden'}" data-col="partner">${item.partner}</td>
-                    <td class="${visibleColumns.includes('project') ? '' : 'col-hidden'}" data-col="project">${item.project}</td>
+        // Get inspection cost (unfiltered - for comparison)
+        function getInspectionCostUnfiltered(inspection) {
+            return inspection.items.reduce((sum, item) => sum + item.cost, 0);
+        }
+
+        // Get property cost
+        function getPropertyCost(property) {
+            return property.inspections.reduce((sum, insp) => sum + getInspectionCost(insp), 0);
+        }
+
+        // Get filtered item count for an inspection
+        function getFilteredItemCount(inspection) {
+            return getFilteredItems(inspection.items).length;
+        }
+
+        // Skeleton HTML
+        function getSkeletonHtml() {
+            return `
+                <div class="skeleton-sub-table">
+                    <div class="skeleton-row"><div class="skeleton skeleton-cell w-120"></div><div class="skeleton skeleton-cell w-80"></div><div class="skeleton skeleton-cell w-60"></div><div class="skeleton skeleton-cell w-80"></div></div>
+                    <div class="skeleton-row"><div class="skeleton skeleton-cell w-120"></div><div class="skeleton skeleton-cell w-80"></div><div class="skeleton skeleton-cell w-60"></div><div class="skeleton skeleton-cell w-80"></div></div>
+                </div>
+            `;
+        }
+
+        // Capitalize
+        function capitalizeFirst(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        // Render table
+        function renderTable() {
+            const showPartner = document.querySelector('#propColumnsDropdown input[value="partner"]')?.checked;
+            const showBranch = document.querySelector('#propColumnsDropdown input[value="branch"]')?.checked;
+
+            // Header
+            const thead = document.getElementById('tableHead');
+            thead.innerHTML = `
+                <tr>
+                    <th>Address</th>
+                    <th>Postcode</th>
+                    <th>Ref Code</th>
+                    <th>Project</th>
+                    ${showPartner ? '<th>Partner</th>' : ''}
+                    ${showBranch ? '<th>Branch</th>' : ''}
+                    <th style="width: 180px;">Actions</th>
                 </tr>
-            `).join('');
+            `;
 
-            // Update table info
-            const totalFiltered = filteredData.length;
-            const showingStart = start + 1;
-            const showingEnd = Math.min(end, totalFiltered);
-            tableInfo.textContent = `Showing ${showingStart} to ${showingEnd} of ${totalFiltered} entries`;
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            const filteredData = getFilteredProperties();
+            const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+
+            // Ensure current page is valid
+            if (currentPage > totalPages) currentPage = totalPages || 1;
+
+            const startIndex = (currentPage - 1) * rowsPerPage;
+            const endIndex = Math.min(startIndex + rowsPerPage, filteredData.length);
+            const displayData = filteredData.slice(startIndex, endIndex);
+
+            // Update pagination info
+            document.getElementById('showingFrom').textContent = filteredData.length > 0 ? startIndex + 1 : 0;
+            document.getElementById('showingTo').textContent = endIndex;
+            document.getElementById('totalEntries').textContent = filteredData.length;
 
             // Render pagination
-            renderPagination();
-        }
+            renderPagination(totalPages);
 
-        function renderPagination() {
-            const totalPages = Math.ceil(filteredData.length / entriesPerPage);
+            const propColCount = 4 + (showPartner ? 1 : 0) + (showBranch ? 1 : 0) + 1;
 
-            let html = `
-                <button class="pagination-btn" ${currentPage === 1 ? 'disabled' : ''} data-page="prev">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="15 18 9 12 15 6"></polyline>
-                    </svg>
-                </button>
-            `;
+            displayData.forEach(property => {
+                const isExpanded = expandedRows.has(property.id);
+                const isLoading = loadingRows.has(property.id);
 
-            for (let i = 1; i <= totalPages; i++) {
-                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
-                    html += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
-                } else if (i === currentPage - 2 || i === currentPage + 2) {
-                    html += `<span style="padding: 0 4px;">...</span>`;
+                const row = document.createElement('tr');
+                if (isExpanded) {
+                    row.className = 'property-expanded';
                 }
-            }
+                row.innerHTML = `
+                    <td><span class="cell-text">${property.address}</span><span class="property-count">${property.inspections.length}</span></td>
+                    <td>${property.postcode}</td>
+                    <td>${property.refCode}</td>
+                    <td>${property.project}</td>
+                    ${showPartner ? `<td>${property.partner}</td>` : ''}
+                    ${showBranch ? `<td>${property.branch}</td>` : ''}
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-icon-action ${isExpanded ? 'view-action' : ''}" onclick="toggleExpand(${property.id})" data-tooltip="${isExpanded ? 'Collapse' : 'Expand'}">
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transform: ${isExpanded ? 'rotate(180deg)' : 'rotate(0)'};transition:transform 0.2s;">
+                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                </svg>
+                            </button>
+                            <button class="btn-icon-action export-action" onclick="exportProperty(${property.id})" data-tooltip="Export">
+                                ${exportIcon}
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
 
-            html += `
-                <button class="pagination-btn" ${currentPage === totalPages ? 'disabled' : ''} data-page="next">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                </button>
-            `;
+                // Inspection sub-table
+                if (isExpanded || isLoading) {
+                    const containerRow = document.createElement('tr');
+                    containerRow.className = 'inspection-container';
 
-            pagination.innerHTML = html;
-
-            // Add pagination event listeners
-            pagination.querySelectorAll('.pagination-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    if (this.disabled) return;
-                    const page = this.dataset.page;
-                    if (page === 'prev') {
-                        currentPage--;
-                    } else if (page === 'next') {
-                        currentPage++;
+                    if (isLoading) {
+                        containerRow.innerHTML = `<td colspan="${propColCount}">${getSkeletonHtml()}</td>`;
                     } else {
-                        currentPage = parseInt(page);
+                        const conditionRatingActive = isConditionRatingFilterActive();
+                        const selectedRatings = getSelectedConditionRatings();
+                        const isFiltered = conditionRatingActive && selectedRatings.length < 4;
+
+                        // Get selected inspection columns for item details
+                        const showSection = document.querySelector('#inspColumnsDropdown input[value="section"]')?.checked;
+                        const showFlagged = document.querySelector('#inspColumnsDropdown input[value="flagged"]')?.checked;
+                        const showConditionRating = document.querySelector('#inspColumnsDropdown input[value="conditionRating"]')?.checked;
+                        const showCost = document.querySelector('#inspColumnsDropdown input[value="cost"]')?.checked;
+                        const showTotalCost = document.querySelector('#inspColumnsDropdown input[value="totalCost"]')?.checked;
+                        const showSharedReview = document.querySelector('#inspColumnsDropdown input[value="sharedReview"]')?.checked;
+                        const showCommentsBack = document.querySelector('#inspColumnsDropdown input[value="commentsBack"]')?.checked;
+                        const showSharedEsig = document.querySelector('#inspColumnsDropdown input[value="sharedEsig"]')?.checked;
+                        const showPdfSigned = document.querySelector('#inspColumnsDropdown input[value="pdfSigned"]')?.checked;
+
+                        // Check if any item detail columns are selected
+                        const showItemDetails = showSection || showFlagged || showConditionRating || showCost;
+
+                        // Build headers
+                        let inspHeaders = '<th class="col-name">Inspection</th><th class="col-date">Date</th><th class="col-status">Status</th><th class="col-pdf">PDF</th><th class="col-inspector">Inspector</th>';
+                        if (showSection) inspHeaders += '<th class="col-section">Section</th>';
+                        if (showFlagged) inspHeaders += '<th class="col-flagged">Flagged</th>';
+                        if (showConditionRating) inspHeaders += '<th class="col-rating">Rating</th>';
+                        if (showCost) inspHeaders += '<th class="col-cost">Cost</th>';
+                        if (showTotalCost) inspHeaders += '<th class="col-total">Total</th>';
+                        if (showSharedReview) inspHeaders += '<th class="col-check">Review</th>';
+                        if (showCommentsBack) inspHeaders += '<th class="col-check">Comments</th>';
+                        if (showSharedEsig) inspHeaders += '<th class="col-check">eSig</th>';
+                        if (showPdfSigned) inspHeaders += '<th class="col-check">Signed</th>';
+                        inspHeaders += '<th class="col-action">Actions</th>';
+
+                        // Count columns for footer
+                        let totalColCount = 5;
+                        if (showSection) totalColCount++;
+                        if (showFlagged) totalColCount++;
+                        if (showConditionRating) totalColCount++;
+                        if (showCost) totalColCount++;
+                        if (showTotalCost) totalColCount++;
+                        if (showSharedReview) totalColCount++;
+                        if (showCommentsBack) totalColCount++;
+                        if (showSharedEsig) totalColCount++;
+                        if (showPdfSigned) totalColCount++;
+                        totalColCount++; // action column
+
+                        let inspHtml = '';
+                        property.inspections.forEach(insp => {
+                            const filteredItems = getFilteredItems(insp.items);
+                            const filteredCost = getInspectionCost(insp);
+                            const totalCost = getInspectionCostUnfiltered(insp);
+
+                            // Determine how many rows this inspection will have
+                            const itemRows = showItemDetails ? filteredItems : [null]; // at least one row
+
+                            itemRows.forEach((item, itemIndex) => {
+                                const isFirstRow = itemIndex === 0;
+                                const rowSpan = showItemDetails ? filteredItems.length : 1;
+
+                                inspHtml += `<tr class="${isFirstRow ? 'insp-first-row' : 'insp-item-row'}">`;
+
+                                // Base columns - only on first row with rowspan
+                                if (isFirstRow) {
+                                    inspHtml += `
+                                        <td rowspan="${rowSpan}"><span class="cell-text">${insp.name}</span></td>
+                                        <td rowspan="${rowSpan}">${insp.date}</td>
+                                        <td rowspan="${rowSpan}"><span class="cell-status ${insp.status}">${capitalizeFirst(insp.status)}</span></td>
+                                        <td rowspan="${rowSpan}"><span class="cell-check ${insp.pdfDone ? '' : 'empty'}">${checkIcon}</span></td>
+                                        <td rowspan="${rowSpan}">${insp.inspector}</td>`;
+                                }
+
+                                // Item detail columns - each row
+                                if (showItemDetails && item) {
+                                    if (showSection) inspHtml += `<td class="col-section">${item.section}</td>`;
+                                    if (showFlagged) inspHtml += `<td class="col-flagged">${item.flagged ? '<span class="flag-yes">Yes</span>' : '<span class="flag-no">No</span>'}</td>`;
+                                    if (showConditionRating) inspHtml += `<td class="col-rating"><span class="condition-badge rating-${item.rating.toLowerCase()}">${item.rating}</span></td>`;
+                                    if (showCost) inspHtml += `<td class="col-cost cost-value">£${item.cost.toFixed(2)}</td>`;
+                                }
+
+                                // Summary columns - only on first row
+                                if (isFirstRow) {
+                                    let costDisplay = `£${filteredCost.toFixed(2)}`;
+                                    if (isFiltered && filteredCost !== totalCost) {
+                                        costDisplay = `<span class="filtered-cost">£${filteredCost.toFixed(2)}</span><span class="total-cost-ref">/ £${totalCost.toFixed(2)}</span>`;
+                                    }
+                                    if (showTotalCost) inspHtml += `<td rowspan="${rowSpan}" class="cost-value">${costDisplay}</td>`;
+                                    if (showSharedReview) inspHtml += `<td rowspan="${rowSpan}"><span class="cell-check ${insp.sharedReview ? '' : 'empty'}">${checkIcon}</span></td>`;
+                                    if (showCommentsBack) inspHtml += `<td rowspan="${rowSpan}"><span class="cell-check ${insp.commentsBack ? '' : 'empty'}">${checkIcon}</span></td>`;
+                                    if (showSharedEsig) inspHtml += `<td rowspan="${rowSpan}"><span class="cell-check ${insp.sharedEsig ? '' : 'empty'}">${checkIcon}</span></td>`;
+                                    if (showPdfSigned) inspHtml += `<td rowspan="${rowSpan}"><span class="cell-check ${insp.pdfSigned ? '' : 'empty'}">${checkIcon}</span></td>`;
+                                    inspHtml += `<td rowspan="${rowSpan}">
+                                        <div class="action-buttons">
+                                            <button class="btn-icon-action view-action" onclick="viewInspection(${insp.id})" data-tooltip="View">
+                                                ${viewIcon}
+                                            </button>
+                                            <button class="btn-icon-action schedule-action" onclick="scheduleInspection(${insp.id})" data-tooltip="Schedule">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                                </svg>
+                                            </button>
+                                            <button class="btn-icon-action" onclick="toggleRow(${property.id})" data-tooltip="Collapse">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="18 15 12 9 6 15"></polyline>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </td>`;
+                                }
+
+                                inspHtml += '</tr>';
+                            });
+                        });
+
+                        // Check if Condition or Flagged group is selected (show Property Total only then)
+                        const conditionGroupSelected = document.getElementById('groupConditionRating')?.checked;
+                        const flaggedGroupSelected = document.getElementById('groupFlagged')?.checked;
+                        const showPropertyTotal = conditionGroupSelected || flaggedGroupSelected;
+
+                        // Calculate totals for footer
+                        const totalFilteredCost = property.inspections.reduce((sum, insp) => sum + getInspectionCost(insp), 0);
+                        const totalUnfilteredCost = property.inspections.reduce((sum, insp) => sum + getInspectionCostUnfiltered(insp), 0);
+                        let totalCostDisplay = `£${totalFilteredCost.toFixed(2)}`;
+                        if (isFiltered && totalFilteredCost !== totalUnfilteredCost) {
+                            totalCostDisplay = `<span class="filtered-cost">£${totalFilteredCost.toFixed(2)}</span><span class="total-cost-ref">/ £${totalUnfilteredCost.toFixed(2)}</span>`;
+                        }
+
+                        // Filter indicator
+                        let filterIndicator = '';
+                        if (isFiltered) {
+                            const ratingBadges = selectedRatings.map(r => `<span class="rating-badge-mini rating-${r.toLowerCase()}">${r}</span>`).join('');
+                            filterIndicator = `<div class="filter-indicator">Filtered by: ${ratingBadges}</div>`;
+                        }
+
+                        // Property Total footer - only show when Condition or Flagged group selected
+                        const footerHtml = showPropertyTotal ? `
+                            <tfoot>
+                                <tr class="totals-row">
+                                    <td colspan="${totalColCount - 2}"><strong>Property Total</strong></td>
+                                    <td class="cost-value"><strong>${totalCostDisplay}</strong></td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        ` : '';
+
+                        containerRow.innerHTML = `
+                            <td colspan="${propColCount}">
+                                <div class="sub-table-wrapper">
+                                    ${filterIndicator}
+                                    <table class="sub-table">
+                                        <thead>
+                                            <tr>${inspHeaders}</tr>
+                                        </thead>
+                                        <tbody>${inspHtml}</tbody>
+                                        ${footerHtml}
+                                    </table>
+                                </div>
+                            </td>
+                        `;
                     }
-                    renderTable();
-                });
+                    tbody.appendChild(containerRow);
+                }
             });
         }
 
-        function showLoading() {
-            skeletonTable.classList.add('show');
-            tableWrapper.style.display = 'none';
-            tableFooter.style.display = 'none';
-            tableError.classList.remove('show');
-            tableEmpty.classList.remove('show');
-        }
-
-        function hideLoading() {
-            skeletonTable.classList.remove('show');
-        }
-
-        function showError() {
-            tableError.classList.add('show');
-            tableWrapper.style.display = 'none';
-            tableFooter.style.display = 'none';
-            skeletonTable.classList.remove('show');
-            tableEmpty.classList.remove('show');
-        }
-
-        // ========== EVENT LISTENERS ==========
-
-        // Sidebar toggle
-        const collapseBtn = document.querySelector('.collapse-btn');
-        const sidebar = document.querySelector('.sidebar');
-        const body = document.body;
-
-        collapseBtn.addEventListener('click', function() {
-            sidebar.classList.toggle('collapsed');
-            body.classList.toggle('sidebar-collapsed');
-        });
-
-        // Search
-        searchBtn.addEventListener('click', function() {
-            searchQuery = searchInput.value.trim();
-            showLoading();
-            setTimeout(() => {
-                hideLoading();
-                filterData();
-            }, 500);
-        });
-
-        searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                searchBtn.click();
+        // Toggle expand
+        function toggleExpand(propertyId) {
+            if (expandedRows.has(propertyId)) {
+                expandedRows.delete(propertyId);
+                loadingRows.delete(propertyId);
+                renderTable();
+            } else {
+                loadingRows.add(propertyId);
+                renderTable();
+                setTimeout(() => {
+                    loadingRows.delete(propertyId);
+                    expandedRows.add(propertyId);
+                    renderTable();
+                }, 600);
             }
-        });
+        }
 
-        // Clear search on empty
-        searchInput.addEventListener('input', function() {
-            if (this.value === '' && searchQuery !== '') {
-                searchQuery = '';
-                filterData();
+        // View inspection
+        function viewInspection(inspectionId) {
+            alert('Viewing inspection: ' + inspectionId);
+        }
+
+        // Schedule inspection
+        function scheduleInspection(inspectionId) {
+            alert('Scheduling inspection: ' + inspectionId);
+        }
+
+        // Export property
+        function exportProperty(propertyId) {
+            const prop = propertiesData.find(p => p.id === propertyId);
+            if (prop) {
+                alert('Exporting: ' + prop.address);
             }
-        });
+        }
 
-        // Entries per page
-        entriesSelect.addEventListener('change', function() {
-            entriesPerPage = parseInt(this.value);
+        // Render pagination - Always show even with few items
+        function renderPagination(totalPages) {
+            const pagination = document.getElementById('pagination');
+            // Always show at least 3 pages for UI demo
+            const displayPages = Math.max(totalPages, 3);
+
+            let html = '';
+
+            // Previous button
+            html += `<button class="pagination-btn" onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            </button>`;
+
+            // Page numbers
+            const maxVisiblePages = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(displayPages, startPage + maxVisiblePages - 1);
+
+            if (endPage - startPage + 1 < maxVisiblePages) {
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+
+            // First page + ellipsis
+            if (startPage > 1) {
+                html += `<button class="pagination-btn" onclick="goToPage(1)">1</button>`;
+                if (startPage > 2) {
+                    html += `<span class="pagination-ellipsis">...</span>`;
+                }
+            }
+
+            // Page numbers
+            for (let i = startPage; i <= endPage; i++) {
+                const isDisabled = i > totalPages ? 'disabled' : '';
+                html += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})" ${isDisabled}>${i}</button>`;
+            }
+
+            // Last page + ellipsis
+            if (endPage < displayPages) {
+                if (endPage < displayPages - 1) {
+                    html += `<span class="pagination-ellipsis">...</span>`;
+                }
+                const isDisabled = displayPages > totalPages ? 'disabled' : '';
+                html += `<button class="pagination-btn" onclick="goToPage(${displayPages})" ${isDisabled}>${displayPages}</button>`;
+            }
+
+            // Next button
+            html += `<button class="pagination-btn" onclick="goToPage(${currentPage + 1})" ${currentPage >= totalPages ? 'disabled' : ''}>
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>`;
+
+            pagination.innerHTML = html;
+        }
+
+        // Go to page
+        function goToPage(page) {
+            currentPage = page;
+            loadingRows.clear();
+            // Keep all expanded on new page
+            expandAllOnCurrentPage();
+            renderTable();
+        }
+
+        // Rows per page change
+        document.getElementById('rowsPerPage').addEventListener('change', (e) => {
+            rowsPerPage = parseInt(e.target.value);
             currentPage = 1;
+            loadingRows.clear();
+            // Keep all expanded
+            expandAllOnCurrentPage();
             renderTable();
         });
 
-        // Retry button
-        retryBtn.addEventListener('click', function() {
-            showLoading();
-            setTimeout(() => {
-                hideLoading();
-                filterData();
-            }, 1000);
-        });
+        // Expand All / Collapse All button
+        document.getElementById('expandAllBtn').addEventListener('click', () => {
+            const btn = document.getElementById('expandAllBtn');
+            const textSpan = document.getElementById('expandAllText');
+            const filteredData = getFilteredProperties();
+            const startIndex = (currentPage - 1) * rowsPerPage;
+            const endIndex = Math.min(startIndex + rowsPerPage, filteredData.length);
+            const displayData = filteredData.slice(startIndex, endIndex);
 
-        // Export button
-        exportBtn.addEventListener('click', function() {
-            // Simple CSV export
-            let csv = 'Address,Inspection,Date,Status,Inspector,Branch,Postcode,Ref Code,Partner,Project\n';
-            filteredData.forEach(item => {
-                csv += `"${item.address}","${item.inspection}","${formatDate(item.date)}","${item.status}","${item.inspector}","${item.branch}","${item.postcode}","${item.refCode}","${item.partner}","${item.project}"\n`;
-            });
-
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'inspections_export.csv';
-            a.click();
-            window.URL.revokeObjectURL(url);
-        });
-
-        // Multi-select dropdowns
-        document.querySelectorAll('.multiselect-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const dropdown = this.nextElementSibling;
-                const isOpen = dropdown.classList.contains('show');
-
-                // Close all dropdowns
-                document.querySelectorAll('.multiselect-dropdown').forEach(d => d.classList.remove('show'));
-                document.querySelectorAll('.multiselect-btn').forEach(b => b.classList.remove('active'));
-                document.querySelectorAll('.date-filter-dropdown').forEach(d => d.classList.remove('show'));
-                document.querySelectorAll('.date-filter-btn').forEach(b => b.classList.remove('active'));
-
-                if (!isOpen) {
-                    dropdown.classList.add('show');
-                    this.classList.add('active');
-                }
-            });
-        });
-
-        // Status filter checkboxes
-        document.querySelectorAll('#statusDropdown input[type="checkbox"]').forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                const status = this.dataset.status;
-                if (this.checked) {
-                    selectedStatuses.push(status);
-                } else {
-                    selectedStatuses = selectedStatuses.filter(s => s !== status);
-                }
-                document.getElementById('statusCount').textContent = selectedStatuses.length;
-                showLoading();
-                setTimeout(() => {
-                    hideLoading();
-                    filterData();
-                }, 300);
-            });
-        });
-
-        // Columns filter checkboxes
-        document.querySelectorAll('#columnsDropdown input[type="checkbox"]').forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                const col = this.value;
-                if (this.checked) {
-                    visibleColumns.push(col);
-                } else {
-                    visibleColumns = visibleColumns.filter(c => c !== col);
-                }
-                document.getElementById('columnsCount').textContent = visibleColumns.length;
-                renderTable();
-            });
-        });
-
-        // Date filter dropdown
-        const dateFilterBtn = document.getElementById('dateFilterBtn');
-        const dateFilterDropdown = document.getElementById('dateFilterDropdown');
-        const dateFilterText = document.getElementById('dateFilterText');
-        const customDateRange = document.getElementById('customDateRange');
-        const startDateInput = document.getElementById('startDate');
-        const endDateInput = document.getElementById('endDate');
-        const applyDateRangeBtn = document.getElementById('applyDateRange');
-        const startDateError = document.getElementById('startDateError');
-        const endDateError = document.getElementById('endDateError');
-        const dateRangeError = document.getElementById('dateRangeError');
-
-        dateFilterBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const isOpen = dateFilterDropdown.classList.contains('show');
-
-            // Close all dropdowns
-            document.querySelectorAll('.multiselect-dropdown').forEach(d => d.classList.remove('show'));
-            document.querySelectorAll('.multiselect-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.date-filter-dropdown').forEach(d => d.classList.remove('show'));
-            document.querySelectorAll('.date-filter-btn').forEach(b => b.classList.remove('active'));
-
-            if (!isOpen) {
-                dateFilterDropdown.classList.add('show');
-                this.classList.add('active');
+            if (allExpanded) {
+                // Collapse all
+                expandedRows.clear();
+                loadingRows.clear();
+                allExpanded = false;
+                btn.classList.add('collapsed');
+                textSpan.textContent = 'Expand All';
+                btn.setAttribute('data-tooltip', 'Expand All');
+            } else {
+                // Expand all on current page
+                displayData.forEach(p => expandedRows.add(p.id));
+                allExpanded = true;
+                btn.classList.remove('collapsed');
+                textSpan.textContent = 'Collapse All';
+                btn.setAttribute('data-tooltip', 'Collapse All');
             }
+            renderTable();
         });
 
-        document.querySelectorAll('.date-option').forEach(option => {
-            option.addEventListener('click', function() {
-                const value = this.dataset.value;
+        // Update expand button state after page changes
+        function updateExpandButtonState() {
+            const btn = document.getElementById('expandAllBtn');
+            const textSpan = document.getElementById('expandAllText');
+            const filteredData = getFilteredProperties();
+            const startIndex = (currentPage - 1) * rowsPerPage;
+            const endIndex = Math.min(startIndex + rowsPerPage, filteredData.length);
+            const displayData = filteredData.slice(startIndex, endIndex);
 
-                // Update selection
-                document.querySelectorAll('.date-option').forEach(o => o.classList.remove('selected'));
-                this.classList.add('selected');
-
-                if (value === 'custom') {
-                    customDateRange.classList.add('show');
-                } else {
-                    customDateRange.classList.remove('show');
-                    dateFilter = value;
-
-                    const labels = {
-                        'week': 'This Week',
-                        'month': 'This Month',
-                        '3months': 'Last 3 Months',
-                        '6months': 'Last 6 Months',
-                        '1year': 'Last 1 Year'
-                    };
-                    dateFilterText.textContent = labels[value];
-
-                    dateFilterDropdown.classList.remove('show');
-                    dateFilterBtn.classList.remove('active');
-
-                    showLoading();
-                    setTimeout(() => {
-                        hideLoading();
-                        filterData();
-                    }, 300);
-                }
-            });
-        });
-
-        // Custom date range validation and apply
-        function validateDateRange() {
-            let isValid = true;
-
-            // Reset errors
-            startDateInput.classList.remove('error');
-            endDateInput.classList.remove('error');
-            startDateError.classList.remove('show');
-            endDateError.classList.remove('show');
-            dateRangeError.classList.remove('show');
-
-            if (!startDateInput.value) {
-                startDateInput.classList.add('error');
-                startDateError.classList.add('show');
-                isValid = false;
+            const allOnPageExpanded = displayData.every(p => expandedRows.has(p.id));
+            if (allOnPageExpanded && displayData.length > 0) {
+                allExpanded = true;
+                btn.classList.remove('collapsed');
+                textSpan.textContent = 'Collapse All';
+                btn.setAttribute('data-tooltip', 'Collapse All');
+            } else {
+                allExpanded = false;
+                btn.classList.add('collapsed');
+                textSpan.textContent = 'Expand All';
+                btn.setAttribute('data-tooltip', 'Expand All');
             }
-
-            if (!endDateInput.value) {
-                endDateInput.classList.add('error');
-                endDateError.classList.add('show');
-                isValid = false;
-            }
-
-            if (startDateInput.value && endDateInput.value) {
-                const start = new Date(startDateInput.value);
-                const end = new Date(endDateInput.value);
-                if (end < start) {
-                    dateRangeError.classList.add('show');
-                    isValid = false;
-                }
-            }
-
-            return isValid;
         }
 
-        applyDateRangeBtn.addEventListener('click', function() {
-            if (validateDateRange()) {
-                customStartDate = new Date(startDateInput.value);
-                customEndDate = new Date(endDateInput.value);
-                customEndDate.setHours(23, 59, 59, 999);
-
-                dateFilter = 'custom';
-
-                const formatShort = (d) => `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
-                dateFilterText.textContent = `${formatShort(customStartDate)} - ${formatShort(customEndDate)}`;
-
-                dateFilterDropdown.classList.remove('show');
-                dateFilterBtn.classList.remove('active');
-
-                showLoading();
-                setTimeout(() => {
-                    hideLoading();
-                    filterData();
-                }, 300);
-            }
-        });
-
-        // Close dropdowns when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.multiselect-wrapper') && !e.target.closest('.date-filter-wrapper')) {
-                document.querySelectorAll('.multiselect-dropdown').forEach(d => d.classList.remove('show'));
-                document.querySelectorAll('.multiselect-btn').forEach(b => b.classList.remove('active'));
-                document.querySelectorAll('.date-filter-dropdown').forEach(d => d.classList.remove('show'));
-                document.querySelectorAll('.date-filter-btn').forEach(b => b.classList.remove('active'));
-            }
-        });
-
-        // Sortable columns
-        document.querySelectorAll('.data-table th.sortable').forEach(th => {
-            th.addEventListener('click', function() {
-                const col = this.dataset.sort;
-
-                if (sortColumn === col) {
-                    sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
-                } else {
-                    sortColumn = col;
-                    sortDirection = 'asc';
-                }
-
-                // Update UI
-                document.querySelectorAll('.data-table th').forEach(h => {
-                    h.classList.remove('sorted', 'asc', 'desc');
-                });
-                this.classList.add('sorted', sortDirection);
-
-                filterData();
-            });
-        });
-
-        // ========== INITIAL LOAD ==========
-        showLoading();
-        setTimeout(() => {
-            hideLoading();
-            filterData();
-        }, 800);
+        // Initial render
+        renderTable();
     </script>
 </body>
 </html>
